@@ -24,6 +24,7 @@ import {
   TextField,
   CircularProgress,
   Alert,
+  Stack,
 } from '@mui/material';
 import {
   MoreVert,
@@ -178,108 +179,197 @@ export const UsuariosPage = () => {
         </Typography>
       </Box>
 
-      <Card>
-        <CardContent sx={{ p: 0 }}>
-          <TableContainer sx={{ 
-            overflowX: 'auto',
-            '&::-webkit-scrollbar': {
-              height: 8,
-            },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: 'background.default',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: 'divider',
-              borderRadius: 4,
-            },
-          }}>
-            <Table sx={{ minWidth: 650 }}>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'background.default' }}>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Nombre</TableCell>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Email</TableCell>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Área</TableCell>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Cargo</TableCell>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Salario</TableCell>
-                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>IBC</TableCell>
-                  {canEdit && <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Rol</TableCell>}
-                  {canEdit && <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }} align="right">Acciones</TableCell>}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {usuariosFiltrados.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={canEdit ? 8 : 6} align="center" sx={{ py: 8 }}>
-                      <Typography color="text.secondary">
-                        {currentUser?.rol === 'lider' 
-                          ? 'No hay colaboradores en tu área'
-                          : currentUser?.rol === 'conta'
-                          ? 'No hay colaboradores registrados'
-                          : 'No hay usuarios registrados'}
-                      </Typography>
-                    </TableCell>
+      {/* Vista Desktop - Tabla */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Card>
+          <CardContent sx={{ p: 0 }}>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: 'background.default' }}>
+                    <TableCell sx={{ fontWeight: 700 }}>Nombre</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Área</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Cargo</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Salario</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>IBC</TableCell>
+                    {canEdit && <TableCell sx={{ fontWeight: 700 }}>Rol</TableCell>}
+                    {canEdit && <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>}
                   </TableRow>
-                ) : (
-                  usuariosFiltrados.map((user) => (
-                  <TableRow key={user.id} hover>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                      <Typography variant="body2" fontWeight={600}>
-                        {user.nombre}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 } }}>
-                      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {user.email}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                      <Typography variant="body2">
-                        {user.area || '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                      <Typography variant="body2">
-                        {user.cargo || '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                      <Typography variant="body2" fontWeight={600} color="primary.main">
-                        {user.salario ? formatCurrency(user.salario) : '-'}
-                      </Typography>
-                    </TableCell>
-                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                      <Typography variant="body2" fontWeight={600}>
-                        {user.ibc ? formatCurrency(user.ibc) : '-'}
-                      </Typography>
-                    </TableCell>
-                    {canEdit && (
-                      <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
-                        <Chip
-                          label={rolLabels[user.rol]}
-                          color={rolColors[user.rol]}
-                          size="small"
-                          sx={{ fontWeight: 600 }}
-                        />
+                </TableHead>
+                <TableBody>
+                  {usuariosFiltrados.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={canEdit ? 8 : 6} align="center" sx={{ py: 8 }}>
+                        <Typography color="text.secondary">
+                          {currentUser?.rol === 'lider' 
+                            ? 'No hay colaboradores en tu área'
+                            : currentUser?.rol === 'conta'
+                            ? 'No hay colaboradores registrados'
+                            : 'No hay usuarios registrados'}
+                        </Typography>
                       </TableCell>
-                    )}
-                    {canEdit && (
-                      <TableCell align="right" sx={{ px: { xs: 1, sm: 2 } }}>
+                    </TableRow>
+                  ) : (
+                    usuariosFiltrados.map((user) => (
+                      <TableRow key={user.id} hover>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {user.nombre}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" color="text.secondary">
+                            {user.email}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {user.area || '-'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {user.cargo || '-'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600} color="primary.main">
+                            {user.salario ? formatCurrency(user.salario) : '-'}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {user.ibc ? formatCurrency(user.ibc) : '-'}
+                          </Typography>
+                        </TableCell>
+                        {canEdit && (
+                          <TableCell>
+                            <Chip
+                              label={rolLabels[user.rol]}
+                              color={rolColors[user.rol]}
+                              size="small"
+                              sx={{ fontWeight: 600 }}
+                            />
+                          </TableCell>
+                        )}
+                        {canEdit && (
+                          <TableCell align="right">
+                            <IconButton
+                              size="small"
+                              onClick={(e) => handleMenuOpen(e, user)}
+                            >
+                              <MoreVert />
+                            </IconButton>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Vista Mobile - Cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {usuariosFiltrados.length === 0 ? (
+          <Card>
+            <CardContent sx={{ py: 8, textAlign: 'center' }}>
+              <Typography color="text.secondary">
+                {currentUser?.rol === 'lider' 
+                  ? 'No hay colaboradores en tu área'
+                  : currentUser?.rol === 'conta'
+                  ? 'No hay colaboradores registrados'
+                  : 'No hay usuarios registrados'}
+              </Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          <Stack spacing={2}>
+            {usuariosFiltrados.map((user) => (
+              <Card key={user.id}>
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Box flex={1}>
+                        <Typography variant="subtitle2" fontWeight={700}>
+                          {user.nombre}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {user.email}
+                        </Typography>
+                      </Box>
+                      {canEdit && (
                         <IconButton
                           size="small"
                           onClick={(e) => handleMenuOpen(e, user)}
                         >
                           <MoreVert />
                         </IconButton>
-                      </TableCell>
+                      )}
+                    </Stack>
+
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                      {user.area && (
+                        <Chip
+                          label={user.area}
+                          size="small"
+                          sx={{ fontWeight: 600 }}
+                        />
+                      )}
+                      {canEdit && (
+                        <Chip
+                          label={rolLabels[user.rol]}
+                          color={rolColors[user.rol]}
+                          size="small"
+                          sx={{ fontWeight: 600 }}
+                        />
+                      )}
+                    </Stack>
+
+                    {user.cargo && (
+                      <Box>
+                        <Typography variant="caption" color="text.secondary">
+                          Cargo
+                        </Typography>
+                        <Typography variant="body2">
+                          {user.cargo}
+                        </Typography>
+                      </Box>
                     )}
-                  </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
+
+                    <Stack direction="row" spacing={2}>
+                      {user.salario && (
+                        <Box flex={1}>
+                          <Typography variant="caption" color="text.secondary">
+                            Salario
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600} color="primary.main">
+                            {formatCurrency(user.salario)}
+                          </Typography>
+                        </Box>
+                      )}
+                      {user.ibc && (
+                        <Box flex={1}>
+                          <Typography variant="caption" color="text.secondary">
+                            IBC
+                          </Typography>
+                          <Typography variant="body2" fontWeight={600}>
+                            {formatCurrency(user.ibc)}
+                          </Typography>
+                        </Box>
+                      )}
+                    </Stack>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </Box>
 
       {/* Menu contextual */}
       <Menu
