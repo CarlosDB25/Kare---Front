@@ -18,7 +18,6 @@ import {
   Description,
   Person,
   BusinessCenter,
-  AutoAwesome,
   Psychology,
 } from '@mui/icons-material';
 import { useState } from 'react';

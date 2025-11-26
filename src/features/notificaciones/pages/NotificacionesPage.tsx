@@ -21,8 +21,6 @@ import {
   Warning,
   Error as ErrorIcon,
   DoneAll,
-  NotificationImportant,
-  PriorityHigh,
 } from '@mui/icons-material';
 import { notificacionService } from '../../../api/services/notificacionService';
 import { useAuthStore } from '../../../store/authStore';

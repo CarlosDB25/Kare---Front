@@ -6,12 +6,14 @@ export interface Incapacidad {
   usuario_id: number;
   usuario_nombre?: string;
   usuario_email?: string;
+  usuario_documento?: string;
   tipo: TipoIncapacidad;
   fecha_inicio: string;
   fecha_fin: string;
   dias_totales: number;
   diagnostico: string;
   documento_path?: string;
+  documento_url?: string;
   ibc: number;
   valor_dia: number;
   porcentaje_empresa: number;
