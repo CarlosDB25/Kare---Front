@@ -396,7 +396,3 @@ chore: Mantenimiento
 ## 📝 Licencia
 
 Proyecto académico - Universidad
-
-## 👨‍💻 Autor
-
-Desarrollado por Carlos DB
