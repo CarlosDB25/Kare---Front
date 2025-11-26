@@ -215,7 +215,14 @@ export const IncapacidadesPage = () => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <Box 
+        display="flex" 
+        justifyContent="space-between" 
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        gap={2}
+        mb={4}
+      >
         <Box>
           <Typography variant="h4" fontWeight={700} gutterBottom>
             Incapacidades
@@ -230,120 +237,223 @@ export const IncapacidadesPage = () => {
             startIcon={<Add />}
             onClick={() => setCreateDialogOpen(true)}
             sx={{ px: 3, py: 1.5 }}
+            fullWidth={{ xs: true, sm: false }}
           >
             Nueva Incapacidad
           </Button>
         )}
       </Box>
 
-      <Card>
-        <CardContent sx={{ p: 0 }}>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'background.default' }}>
-                  <TableCell sx={{ fontWeight: 700 }}>Colaborador</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Tipo</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Período</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Días</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Diagnóstico</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {incapacidades.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
-                      <Typography color="text.secondary">
-                        No hay incapacidades registradas
-                      </Typography>
-                    </TableCell>
+      {/* Vista desktop - Tabla */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Card>
+          <CardContent sx={{ p: 0 }}>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: 'background.default' }}>
+                    <TableCell sx={{ fontWeight: 700 }}>Colaborador</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Tipo</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Período</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Días</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Estado</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Diagnóstico</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>
                   </TableRow>
-                ) : (
-                  incapacidades.map((incap) => (
-                    <TableRow
-                      key={incap.id}
-                      hover
-                      sx={{
-                        '&:hover': {
-                          bgcolor: 'action.hover',
-                          cursor: 'pointer',
-                        },
-                      }}
-                      onClick={() => {
-                        setSelectedIncap(incap);
-                        setDetailDialogOpen(true);
-                      }}
-                    >
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={600}>
+                </TableHead>
+                <TableBody>
+                  {incapacidades.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
+                        <Typography color="text.secondary">
+                          No hay incapacidades registradas
+                        </Typography>
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    incapacidades.map((incap) => (
+                      <TableRow
+                        key={incap.id}
+                        hover
+                        sx={{
+                          '&:hover': {
+                            bgcolor: 'action.hover',
+                            cursor: 'pointer',
+                          },
+                        }}
+                        onClick={() => {
+                          setSelectedIncap(incap);
+                          setDetailDialogOpen(true);
+                        }}
+                      >
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {incap.usuario_nombre || 'N/A'}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {incap.usuario_email}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={incap.tipo}
+                            size="small"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {formatDate(incap.fecha_inicio)}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatDate(incap.fecha_fin)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {calculateDays(incap.fecha_inicio, incap.fecha_fin)} días
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={incap.estado.replace('_', ' ')}
+                            color={estadoColors[incap.estado]}
+                            size="small"
+                            sx={{
+                              fontWeight: 600,
+                              textTransform: 'capitalize',
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              maxWidth: 200,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {incap.diagnostico}
+                          </Typography>
+                        </TableCell>
+                        <TableCell align="right" onClick={(e) => e.stopPropagation()}>
+                          <IconButton
+                            size="small"
+                            onClick={(e) => handleMenuOpen(e, incap)}
+                          >
+                            <MoreVert />
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Vista mobile - Cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {incapacidades.length === 0 ? (
+          <Card>
+            <CardContent sx={{ py: 8, textAlign: 'center' }}>
+              <Typography color="text.secondary">
+                No hay incapacidades registradas
+              </Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          <Stack spacing={2}>
+            {incapacidades.map((incap) => (
+              <Card 
+                key={incap.id}
+                onClick={() => {
+                  setSelectedIncap(incap);
+                  setDetailDialogOpen(true);
+                }}
+                sx={{
+                  cursor: 'pointer',
+                  '&:hover': {
+                    boxShadow: 4,
+                  },
+                }}
+              >
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Box flex={1}>
+                        <Typography variant="subtitle2" fontWeight={700}>
                           {incap.usuario_nombre || 'N/A'}
                         </Typography>
                         <Typography variant="caption" color="text.secondary">
                           {incap.usuario_email}
                         </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={incap.tipo}
-                          size="small"
-                          sx={{ fontWeight: 600 }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {formatDate(incap.fecha_inicio)}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(incap.fecha_fin)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={600}>
-                          {calculateDays(incap.fecha_inicio, incap.fecha_fin)} días
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={incap.estado.replace('_', ' ')}
-                          color={estadoColors[incap.estado]}
-                          size="small"
-                          sx={{
-                            fontWeight: 600,
-                            textTransform: 'capitalize',
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            maxWidth: 200,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {incap.diagnostico}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right" onClick={(e) => e.stopPropagation()}>
-                        <IconButton
-                          size="small"
-                          onClick={(e) => handleMenuOpen(e, incap)}
-                        >
-                          <MoreVert />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
+                      </Box>
+                      <IconButton
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleMenuOpen(e, incap);
+                        }}
+                      >
+                        <MoreVert />
+                      </IconButton>
+                    </Stack>
+
+                    <Stack direction="row" spacing={1} flexWrap="wrap">
+                      <Chip
+                        label={incap.tipo}
+                        size="small"
+                        sx={{ fontWeight: 600 }}
+                      />
+                      <Chip
+                        label={incap.estado.replace('_', ' ')}
+                        color={estadoColors[incap.estado]}
+                        size="small"
+                        sx={{
+                          fontWeight: 600,
+                          textTransform: 'capitalize',
+                        }}
+                      />
+                    </Stack>
+
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Período
+                      </Typography>
+                      <Typography variant="body2">
+                        {formatDate(incap.fecha_inicio)} - {formatDate(incap.fecha_fin)}
+                      </Typography>
+                      <Typography variant="caption" fontWeight={600}>
+                        {calculateDays(incap.fecha_inicio, incap.fecha_fin)} días
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Diagnóstico
+                      </Typography>
+                      <Typography variant="body2" sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}>
+                        {incap.diagnostico}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </Box>
 
       {/* Menu contextual */}
       <Menu

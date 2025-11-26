@@ -92,7 +92,13 @@ export const CreateIncapacidadDialog = ({ open, onClose }: Props) => {
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog 
+      open={open} 
+      onClose={handleClose} 
+      maxWidth="sm" 
+      fullWidth
+      fullScreen={{ xs: true, sm: false }}
+    >
       <DialogTitle sx={{ fontWeight: 700 }}>
         Nueva Incapacidad
       </DialogTitle>

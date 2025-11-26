@@ -94,7 +94,13 @@ export const IncapacidadDetailDialog = ({ incapacidad, open, onClose }: Props) =
   };
 
   return (
-    <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
+    <Dialog 
+      open={open} 
+      onClose={onClose} 
+      maxWidth="md" 
+      fullWidth
+      fullScreen={{ xs: true, sm: false }}
+    >
       <DialogTitle>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
           <Typography variant="h6" fontWeight={700}>

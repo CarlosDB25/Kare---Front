@@ -108,7 +108,13 @@ export const EditIncapacidadDialog = ({ open, onClose, incapacidad }: Props) => 
   if (!incapacidad) return null;
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
+    <Dialog 
+      open={open} 
+      onClose={handleClose} 
+      maxWidth="sm" 
+      fullWidth
+      fullScreen={{ xs: true, sm: false }}
+    >
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
         <Edit color="primary" />
         Corregir Incapacidad Rechazada
