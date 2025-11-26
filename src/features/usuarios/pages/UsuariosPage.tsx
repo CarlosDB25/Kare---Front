@@ -180,18 +180,30 @@ export const UsuariosPage = () => {
 
       <Card>
         <CardContent sx={{ p: 0 }}>
-          <TableContainer>
-            <Table>
+          <TableContainer sx={{ 
+            overflowX: 'auto',
+            '&::-webkit-scrollbar': {
+              height: 8,
+            },
+            '&::-webkit-scrollbar-track': {
+              backgroundColor: 'background.default',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              backgroundColor: 'divider',
+              borderRadius: 4,
+            },
+          }}>
+            <Table sx={{ minWidth: 650 }}>
               <TableHead>
                 <TableRow sx={{ bgcolor: 'background.default' }}>
-                  <TableCell sx={{ fontWeight: 700 }}>Nombre</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Email</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Área</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Cargo</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Salario</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>IBC</TableCell>
-                  {canEdit && <TableCell sx={{ fontWeight: 700 }}>Rol</TableCell>}
-                  {canEdit && <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>}
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Nombre</TableCell>
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Email</TableCell>
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Área</TableCell>
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Cargo</TableCell>
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Salario</TableCell>
+                  <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>IBC</TableCell>
+                  {canEdit && <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>Rol</TableCell>}
+                  {canEdit && <TableCell sx={{ fontWeight: 700, px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }} align="right">Acciones</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -210,38 +222,38 @@ export const UsuariosPage = () => {
                 ) : (
                   usuariosFiltrados.map((user) => (
                   <TableRow key={user.id} hover>
-                    <TableCell>
+                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                       <Typography variant="body2" fontWeight={600}>
                         {user.nombre}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Typography variant="body2" color="text.secondary">
+                    <TableCell sx={{ px: { xs: 1, sm: 2 } }}>
+                      <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                         {user.email}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                       <Typography variant="body2">
                         {user.area || '-'}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                       <Typography variant="body2">
                         {user.cargo || '-'}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                       <Typography variant="body2" fontWeight={600} color="primary.main">
                         {user.salario ? formatCurrency(user.salario) : '-'}
                       </Typography>
                     </TableCell>
-                    <TableCell>
+                    <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                       <Typography variant="body2" fontWeight={600}>
                         {user.ibc ? formatCurrency(user.ibc) : '-'}
                       </Typography>
                     </TableCell>
                     {canEdit && (
-                      <TableCell>
+                      <TableCell sx={{ px: { xs: 1, sm: 2 }, whiteSpace: 'nowrap' }}>
                         <Chip
                           label={rolLabels[user.rol]}
                           color={rolColors[user.rol]}
@@ -251,7 +263,7 @@ export const UsuariosPage = () => {
                       </TableCell>
                     )}
                     {canEdit && (
-                      <TableCell align="right">
+                      <TableCell align="right" sx={{ px: { xs: 1, sm: 2 } }}>
                         <IconButton
                           size="small"
                           onClick={(e) => handleMenuOpen(e, user)}

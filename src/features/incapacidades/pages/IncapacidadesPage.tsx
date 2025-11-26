@@ -80,31 +80,13 @@ export const IncapacidadesPage = () => {
   // Filtrar incapacidades por área si es líder
   const incapacidadesFiltradas = user?.rol === 'lider' 
     ? incapacidades.filter(incap => {
-        // Buscar el colaborador en la lista de usuarios
-        const colaborador = usuarios.find(u => u.id === incap.colaborador_id);
-        
-        // Debug logs
-        console.log('🔍 Filtro Líder - Incapacidad:', {
-          incapId: incap.id,
-          colaborador_id: incap.colaborador_id,
-          colaboradorEncontrado: colaborador,
-          areaColaborador: colaborador?.area,
-          areaLider: user.area,
-          coincide: colaborador?.area === user.area
-        });
+        // Buscar el colaborador en la lista de usuarios usando usuario_id
+        const colaborador = usuarios.find(u => u.id === incap.usuario_id);
         
         // Solo mostrar si el colaborador existe, tiene área y es la misma que el líder
         return colaborador && colaborador.area && user.area && colaborador.area === user.area;
       })
     : incapacidades;
-
-  console.log('📊 Debug Incapacidades:', {
-    rolUsuario: user?.rol,
-    areaUsuario: user?.area,
-    totalIncapacidades: incapacidades.length,
-    totalUsuarios: usuarios.length,
-    incapacidadesFiltradas: incapacidadesFiltradas.length
-  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => incapacidadService.delete(id),
