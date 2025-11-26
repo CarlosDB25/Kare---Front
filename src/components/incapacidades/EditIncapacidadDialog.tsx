@@ -12,6 +12,8 @@ import {
   Box,
   Typography,
   Chip,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { Edit, CloudUpload } from '@mui/icons-material';
 import { incapacidadService } from '../../api/services/incapacidadService';
@@ -27,6 +29,8 @@ interface Props {
 export const EditIncapacidadDialog = ({ open, onClose, incapacidad }: Props) => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   
   // Inicializar formData con los valores de incapacidad o valores por defecto
   const initialFormData = {
@@ -113,7 +117,7 @@ export const EditIncapacidadDialog = ({ open, onClose, incapacidad }: Props) => 
       onClose={handleClose} 
       maxWidth="sm" 
       fullWidth
-      fullScreen={{ xs: true, sm: false }}
+      fullScreen={fullScreen}
     >
       <DialogTitle sx={{ fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
         <Edit color="primary" />

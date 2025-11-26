@@ -11,6 +11,8 @@ import {
   Alert,
   Box,
   Typography,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import { CloudUpload } from '@mui/icons-material';
 import { incapacidadService } from '../../api/services/incapacidadService';
@@ -25,6 +27,8 @@ interface Props {
 export const CreateIncapacidadDialog = ({ open, onClose }: Props) => {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [formData, setFormData] = useState<Partial<CreateIncapacidadData>>({
     tipo: 'EPS',
     fecha_inicio: '',
@@ -97,7 +101,7 @@ export const CreateIncapacidadDialog = ({ open, onClose }: Props) => {
       onClose={handleClose} 
       maxWidth="sm" 
       fullWidth
-      fullScreen={{ xs: true, sm: false }}
+      fullScreen={fullScreen}
     >
       <DialogTitle sx={{ fontWeight: 700 }}>
         Nueva Incapacidad

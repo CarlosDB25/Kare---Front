@@ -236,8 +236,7 @@ export const IncapacidadesPage = () => {
             variant="contained"
             startIcon={<Add />}
             onClick={() => setCreateDialogOpen(true)}
-            sx={{ px: 3, py: 1.5 }}
-            fullWidth={{ xs: true, sm: false }}
+            sx={{ px: 3, py: 1.5, width: { xs: '100%', sm: 'auto' } }}
           >
             Nueva Incapacidad
           </Button>

@@ -12,6 +12,8 @@ import {
   Paper,
   Alert,
   CircularProgress,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import {
   CalendarToday,
@@ -58,6 +60,8 @@ const InfoItem = ({ icon, label, value }: { icon: React.ReactNode; label: string
 
 export const IncapacidadDetailDialog = ({ incapacidad, open, onClose }: Props) => {
   const { user } = useAuthStore();
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrResult, setOcrResult] = useState<any>(null);
   const [ocrError, setOcrError] = useState('');
@@ -99,7 +103,7 @@ export const IncapacidadDetailDialog = ({ incapacidad, open, onClose }: Props) =
       onClose={onClose} 
       maxWidth="md" 
       fullWidth
-      fullScreen={{ xs: true, sm: false }}
+      fullScreen={fullScreen}
     >
       <DialogTitle>
         <Stack direction="row" justifyContent="space-between" alignItems="center">
