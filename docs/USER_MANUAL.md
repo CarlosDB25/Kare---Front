@@ -247,23 +247,28 @@ RECHAZADA (Rojo)
 
 ### 💰 Conciliaciones (Conta y GH)
 
-#### Crear Conciliación
+#### Ver Conciliaciones
 
-1. Click en "Nueva Conciliación"
-2. Completar:
-   - **Nombre**: Identificador (ej: "Conciliación Noviembre 2024")
-   - **Monto**: Valor total
-   - **Descripción**: Detalles
-   - **Documento**: Adjuntar soporte bancario
-3. Click en "Crear"
+Las conciliaciones se generan automáticamente desde el módulo de incapacidades cuando una incapacidad está en estado PAGADA.
 
-#### Cambiar Estado
+#### Información de Conciliación
 
-Estados disponibles:
-- **Pendiente**: Recién creada
-- **En Revisión**: GH está verificando
-- **Conciliada**: Aprobada y cerrada
-- **Rechazada**: No procede
+1. Ver tabla de conciliaciones
+2. Click en "Ver detalle" para revisar:
+   - **Colaborador**: Quien tuvo la incapacidad
+   - **Tipo**: EPS o ARL
+   - **Días**: Total de días de incapacidad
+   - **Desglose**:
+     * Días empresa (1-2): 66.67% del salario
+     * Días EPS (3+): 66.67% del IBC
+   - **Total**: Monto total calculado
+
+#### Estadísticas
+
+- Total de conciliaciones generadas
+- Valor total conciliado
+- Promedio por conciliación
+- Promedio de días
 
 ---
 
@@ -403,15 +408,15 @@ Cuando un nuevo usuario se registra:
 1. **Ver incapacidades RADICADAS**
    - Dashboard → Filtrar por RADICADA
 
-2. **Verificar pago en sistema bancario**
+2. **Confirmar cuando la EPS/ARL realice el pago**
 
 3. **Marcar como PAGADA**
    - Menu → Cambiar Estado → PAGADA
 
 4. **Gestionar conciliaciones**
-   - Crear documentos de conciliación mensual
-   - Adjuntar soportes
-   - Cambiar estados según revisión
+   - Ver el desglose financiero de cada incapacidad
+   - Revisar cálculos de días empresa vs EPS
+   - Consultar estadísticas de totales conciliados
 
 ---
 

@@ -2,7 +2,7 @@
 
 ## 📋 Descripción
 
-KARE es una aplicación web moderna para la gestión integral de incapacidades médicas, reemplazos de personal y conciliaciones. Permite a las organizaciones controlar de manera eficiente las ausencias laborales, gestionar reemplazos temporales y realizar el seguimiento financiero de las incapacidades.
+KARE es una aplicación web para la gestión integral de incapacidades médicas, reemplazos de personal y conciliaciones financieras. Permite a las organizaciones controlar de manera eficiente las ausencias laborales por motivos de salud, gestionar reemplazos temporales y realizar el cálculo automático de los costos asociados a las incapacidades según la normativa laboral colombiana.
 
 ## 🚀 Características Principales
 
@@ -25,9 +25,10 @@ KARE es una aplicación web moderna para la gestión integral de incapacidades m
 - **Notificaciones**: Alertas automáticas para todos los involucrados
 
 ### 💰 Conciliaciones
-- **Gestión financiera**: Control de documentos bancarios
-- **Estados**: Pendiente → En revisión → Conciliada → Rechazada
-- **Observaciones**: Registro de comentarios y seguimiento
+- **Cálculo automático**: Genera el desglose financiero de cada incapacidad
+- **Distribución de costos**: Calcula qué paga la empresa (días 1-2 al 66.67%) y qué paga la EPS (desde día 3 al 66.67%)
+- **Estadísticas**: Visualización de totales conciliados y promedios
+- **Seguimiento**: Registro histórico de todas las conciliaciones generadas
 
 ### 🔔 Notificaciones
 - **Sistema en tiempo real**: Actualización cada 10 segundos
