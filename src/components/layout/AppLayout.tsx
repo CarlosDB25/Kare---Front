@@ -153,58 +153,112 @@ export const AppLayout = () => {
           </ListItem>
         )}
         {user?.rol === 'lider' && (
-          <ListItem disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              onClick={() => navigate('/reemplazos')}
-              sx={{
-                borderRadius: 1,
-                py: 1.2,
-                bgcolor: location.pathname === '/reemplazos' ? 'secondary.main' : 'transparent',
-                color: location.pathname === '/reemplazos' ? '#fff' : 'text.primary',
-                '&:hover': {
-                  bgcolor: location.pathname === '/reemplazos' ? 'secondary.dark' : 'action.hover',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
-                <SwapHoriz />
-              </ListItemIcon>
-              <ListItemText
-                primary="Reemplazos"
-                primaryTypographyProps={{
-                  fontWeight: location.pathname === '/reemplazos' ? 600 : 400,
-                  fontSize: '0.9rem',
+          <>
+            <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => navigate('/usuarios')}
+                sx={{
+                  borderRadius: 1,
+                  py: 1.2,
+                  bgcolor: location.pathname === '/usuarios' ? 'secondary.main' : 'transparent',
+                  color: location.pathname === '/usuarios' ? '#fff' : 'text.primary',
+                  '&:hover': {
+                    bgcolor: location.pathname === '/usuarios' ? 'secondary.dark' : 'action.hover',
+                  },
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                  <People />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Colaboradores"
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === '/usuarios' ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => navigate('/reemplazos')}
+                sx={{
+                  borderRadius: 1,
+                  py: 1.2,
+                  bgcolor: location.pathname === '/reemplazos' ? 'secondary.main' : 'transparent',
+                  color: location.pathname === '/reemplazos' ? '#fff' : 'text.primary',
+                  '&:hover': {
+                    bgcolor: location.pathname === '/reemplazos' ? 'secondary.dark' : 'action.hover',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                  <SwapHoriz />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Reemplazos"
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === '/reemplazos' ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </>
         )}
         {user?.rol === 'conta' && (
-          <ListItem disablePadding sx={{ mb: 0.5 }}>
-            <ListItemButton
-              onClick={() => navigate('/conciliaciones')}
-              sx={{
-                borderRadius: 1,
-                py: 1.2,
-                bgcolor: location.pathname === '/conciliaciones' ? 'secondary.main' : 'transparent',
-                color: location.pathname === '/conciliaciones' ? '#fff' : 'text.primary',
-                '&:hover': {
-                  bgcolor: location.pathname === '/conciliaciones' ? 'secondary.dark' : 'action.hover',
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
-                <AccountBalance />
-              </ListItemIcon>
-              <ListItemText
-                primary="Conciliaciones"
-                primaryTypographyProps={{
-                  fontWeight: location.pathname === '/conciliaciones' ? 600 : 400,
-                  fontSize: '0.9rem',
+          <>
+            <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => navigate('/usuarios')}
+                sx={{
+                  borderRadius: 1,
+                  py: 1.2,
+                  bgcolor: location.pathname === '/usuarios' ? 'secondary.main' : 'transparent',
+                  color: location.pathname === '/usuarios' ? '#fff' : 'text.primary',
+                  '&:hover': {
+                    bgcolor: location.pathname === '/usuarios' ? 'secondary.dark' : 'action.hover',
+                  },
                 }}
-              />
-            </ListItemButton>
-          </ListItem>
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                  <People />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Colaboradores"
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === '/usuarios' ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => navigate('/conciliaciones')}
+                sx={{
+                  borderRadius: 1,
+                  py: 1.2,
+                  bgcolor: location.pathname === '/conciliaciones' ? 'secondary.main' : 'transparent',
+                  color: location.pathname === '/conciliaciones' ? '#fff' : 'text.primary',
+                  '&:hover': {
+                    bgcolor: location.pathname === '/conciliaciones' ? 'secondary.dark' : 'action.hover',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                  <AccountBalance />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Conciliaciones"
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === '/conciliaciones' ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </>
         )}
       </List>
       <Divider />
@@ -246,7 +300,7 @@ export const AppLayout = () => {
             {location.pathname === '/dashboard' && 'Dashboard'}
             {location.pathname === '/incapacidades' && 'Incapacidades'}
             {location.pathname === '/notificaciones' && 'Notificaciones'}
-            {location.pathname === '/usuarios' && 'Usuarios'}
+            {location.pathname === '/usuarios' && (user?.rol === 'lider' || user?.rol === 'conta' ? 'Colaboradores' : 'Usuarios')}
             {location.pathname === '/reemplazos' && 'Reemplazos'}
             {location.pathname === '/conciliaciones' && 'Conciliaciones'}
           </Typography>

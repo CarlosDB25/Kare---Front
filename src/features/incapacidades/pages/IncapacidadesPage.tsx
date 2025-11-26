@@ -35,6 +35,7 @@ import {
 } from '@mui/icons-material';
 import { incapacidadService } from '../../../api/services/incapacidadService';
 import { conciliacionService } from '../../../api/services/conciliacionService';
+import { usuarioService } from '../../../api/services/usuarioService';
 import { useAuthStore } from '../../../store/authStore';
 import type { Incapacidad, UpdateEstadoData } from '../types/incapacidad.types';
 import type { EstadoIncapacidad } from '../../../types/enums';
@@ -65,18 +66,24 @@ export const IncapacidadesPage = () => {
   const [observaciones, setObservaciones] = useState('');
 
   const { data: incapacidades = [], isLoading, error } = useQuery({
-    queryKey: ['incapacidades', user?.id], // Incluir user.id para evitar cache compartido
+    queryKey: ['incapacidades', user?.id],
     queryFn: incapacidadService.getAll,
-    enabled: !!user?.id, // Solo ejecutar cuando hay usuario
+    enabled: !!user?.id,
+  });
+
+  const { data: usuarios = [] } = useQuery({
+    queryKey: ['usuarios'],
+    queryFn: usuarioService.getAll,
+    enabled: user?.rol === 'lider', // Solo cargar si es líder
   });
 
   // Filtrar incapacidades por área si es líder
   const incapacidadesFiltradas = user?.rol === 'lider' 
     ? incapacidades.filter(incap => {
-        // Para líderes: solo mostrar incapacidades de colaboradores de su misma área
-        // Necesitamos comparar el área del usuario actual con el área del colaborador
-        // Si no hay información de área, no mostrar
-        return incap.area && user.area && incap.area === user.area;
+        // Buscar el colaborador en la lista de usuarios
+        const colaborador = usuarios.find(u => u.id === incap.colaborador_id);
+        // Solo mostrar si el colaborador existe, tiene área y es la misma que el líder
+        return colaborador && colaborador.area && user.area && colaborador.area === user.area;
       })
     : incapacidades;
 

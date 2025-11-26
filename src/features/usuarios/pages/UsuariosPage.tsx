@@ -64,6 +64,9 @@ export const UsuariosPage = () => {
     queryFn: () => usuarioService.getAll(),
   });
 
+  // Determinar si el usuario tiene permisos de edición
+  const canEdit = currentUser?.rol === 'gh';
+
   // Filtrar usuarios según el rol
   const usuariosFiltrados = currentUser?.rol === 'lider'
     ? usuarios.filter(usuario => 
@@ -73,7 +76,12 @@ export const UsuariosPage = () => {
         currentUser.area && 
         usuario.area === currentUser.area
       )
-    : usuarios; // GH y CONTA ven todos
+    : currentUser?.rol === 'conta'
+    ? usuarios.filter(usuario => 
+        // Para CONTA: solo mostrar colaboradores (todos)
+        usuario.rol === 'colaborador'
+      )
+    : usuarios; // GH ve todos
 
   const updateRolMutation = useMutation({
     mutationFn: ({ id, rol }: { id: number; rol: string }) => usuarioService.updateRol(id, rol),
@@ -155,11 +163,17 @@ export const UsuariosPage = () => {
     <Box>
       <Box mb={4}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
-          {currentUser?.rol === 'lider' ? 'Mis Colaboradores' : 'Gestión de Usuarios'}
+          {currentUser?.rol === 'lider' 
+            ? 'Mis Colaboradores' 
+            : currentUser?.rol === 'conta'
+            ? 'Colaboradores - Información Contable'
+            : 'Gestión de Usuarios'}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {currentUser?.rol === 'lider' 
             ? `Colaboradores del área de ${currentUser.area || 'tu área'}`
+            : currentUser?.rol === 'conta'
+            ? 'Información salarial y contable de todos los colaboradores'
             : 'Administra los usuarios y sus roles en el sistema'}
         </Typography>
       </Box>
@@ -176,17 +190,19 @@ export const UsuariosPage = () => {
                   <TableCell sx={{ fontWeight: 700 }}>Cargo</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Salario</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>IBC</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Rol</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>
+                  {canEdit && <TableCell sx={{ fontWeight: 700 }}>Rol</TableCell>}
+                  {canEdit && <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>}
                 </TableRow>
               </TableHead>
               <TableBody>
                 {usuariosFiltrados.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
+                    <TableCell colSpan={canEdit ? 8 : 6} align="center" sx={{ py: 8 }}>
                       <Typography color="text.secondary">
                         {currentUser?.rol === 'lider' 
                           ? 'No hay colaboradores en tu área'
+                          : currentUser?.rol === 'conta'
+                          ? 'No hay colaboradores registrados'
                           : 'No hay usuarios registrados'}
                       </Typography>
                     </TableCell>
@@ -224,22 +240,26 @@ export const UsuariosPage = () => {
                         {user.ibc ? formatCurrency(user.ibc) : '-'}
                       </Typography>
                     </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={rolLabels[user.rol]}
-                        color={rolColors[user.rol]}
-                        size="small"
-                        sx={{ fontWeight: 600 }}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        size="small"
-                        onClick={(e) => handleMenuOpen(e, user)}
-                      >
-                        <MoreVert />
-                      </IconButton>
-                    </TableCell>
+                    {canEdit && (
+                      <TableCell>
+                        <Chip
+                          label={rolLabels[user.rol]}
+                          color={rolColors[user.rol]}
+                          size="small"
+                          sx={{ fontWeight: 600 }}
+                        />
+                      </TableCell>
+                    )}
+                    {canEdit && (
+                      <TableCell align="right">
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMenuOpen(e, user)}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                   ))
                 )}
@@ -255,20 +275,19 @@ export const UsuariosPage = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        {currentUser?.rol !== 'lider' && (
-          <MenuItem onClick={handleChangeRole}>
-            <AdminPanelSettings fontSize="small" sx={{ mr: 1 }} />
-            Cambiar Rol
-          </MenuItem>
-        )}
-        {currentUser?.rol !== 'lider' && (
-          <MenuItem onClick={handleCompletarDatos}>
-            <Edit fontSize="small" sx={{ mr: 1 }} />
-            Editar Información
-          </MenuItem>
-        )}
-        {currentUser?.rol === 'lider' && (
-          <MenuItem onClick={handleMenuClose} disabled>
+        {canEdit ? (
+          <>
+            <MenuItem onClick={handleChangeRole}>
+              <AdminPanelSettings fontSize="small" sx={{ mr: 1 }} />
+              Cambiar Rol
+            </MenuItem>
+            <MenuItem onClick={handleCompletarDatos}>
+              <Edit fontSize="small" sx={{ mr: 1 }} />
+              Editar Información
+            </MenuItem>
+          </>
+        ) : (
+          <MenuItem disabled>
             <Typography variant="body2" color="text.secondary">
               Solo vista de consulta
             </Typography>
