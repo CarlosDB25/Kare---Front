@@ -70,6 +70,16 @@ export const IncapacidadesPage = () => {
     enabled: !!user?.id, // Solo ejecutar cuando hay usuario
   });
 
+  // Filtrar incapacidades por área si es líder
+  const incapacidadesFiltradas = user?.rol === 'lider' 
+    ? incapacidades.filter(incap => {
+        // Para líderes: solo mostrar incapacidades de colaboradores de su misma área
+        // Necesitamos comparar el área del usuario actual con el área del colaborador
+        // Si no hay información de área, no mostrar
+        return incap.area && user.area && incap.area === user.area;
+      })
+    : incapacidades;
+
   const deleteMutation = useMutation({
     mutationFn: (id: number) => incapacidadService.delete(id),
     onSuccess: () => {
@@ -261,7 +271,7 @@ export const IncapacidadesPage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {incapacidades.length === 0 ? (
+                  {incapacidadesFiltradas.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={7} align="center" sx={{ py: 8 }}>
                         <Typography color="text.secondary">
@@ -270,7 +280,7 @@ export const IncapacidadesPage = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    incapacidades.map((incap) => (
+                    incapacidadesFiltradas.map((incap) => (
                       <TableRow
                         key={incap.id}
                         hover
@@ -357,7 +367,7 @@ export const IncapacidadesPage = () => {
 
       {/* Vista mobile - Cards */}
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        {incapacidades.length === 0 ? (
+        {incapacidadesFiltradas.length === 0 ? (
           <Card>
             <CardContent sx={{ py: 8, textAlign: 'center' }}>
               <Typography color="text.secondary">
@@ -367,7 +377,7 @@ export const IncapacidadesPage = () => {
           </Card>
         ) : (
           <Stack spacing={2}>
-            {incapacidades.map((incap) => (
+            {incapacidadesFiltradas.map((incap) => (
               <Card 
                 key={incap.id}
                 onClick={() => {

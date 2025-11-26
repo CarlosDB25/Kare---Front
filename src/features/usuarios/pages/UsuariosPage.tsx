@@ -34,6 +34,7 @@ import { usuarioService } from '../../../api/services/usuarioService';
 import type { Usuario } from '../../../api/services/usuarioService';
 import { CompletarDatosDialog } from '../../../components/usuarios/CompletarDatosDialog';
 import type { User } from '../../auth/types/auth.types';
+import { useAuthStore } from '../../../store/authStore';
 
 const rolColors: Record<string, 'default' | 'primary' | 'secondary' | 'success'> = {
   colaborador: 'default',
@@ -50,6 +51,7 @@ const rolLabels: Record<string, string> = {
 };
 
 export const UsuariosPage = () => {
+  const { user: currentUser } = useAuthStore();
   const queryClient = useQueryClient();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedUser, setSelectedUser] = useState<Usuario | null>(null);
@@ -61,6 +63,17 @@ export const UsuariosPage = () => {
     queryKey: ['usuarios'],
     queryFn: () => usuarioService.getAll(),
   });
+
+  // Filtrar usuarios según el rol
+  const usuariosFiltrados = currentUser?.rol === 'lider'
+    ? usuarios.filter(usuario => 
+        // Para líderes: solo mostrar colaboradores de su misma área
+        usuario.rol === 'colaborador' && 
+        usuario.area && 
+        currentUser.area && 
+        usuario.area === currentUser.area
+      )
+    : usuarios; // GH y CONTA ven todos
 
   const updateRolMutation = useMutation({
     mutationFn: ({ id, rol }: { id: number; rol: string }) => usuarioService.updateRol(id, rol),
@@ -142,10 +155,12 @@ export const UsuariosPage = () => {
     <Box>
       <Box mb={4}>
         <Typography variant="h4" fontWeight={700} gutterBottom>
-          Gestión de Usuarios
+          {currentUser?.rol === 'lider' ? 'Mis Colaboradores' : 'Gestión de Usuarios'}
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Administra los usuarios y sus roles en el sistema
+          {currentUser?.rol === 'lider' 
+            ? `Colaboradores del área de ${currentUser.area || 'tu área'}`
+            : 'Administra los usuarios y sus roles en el sistema'}
         </Typography>
       </Box>
 
@@ -166,7 +181,18 @@ export const UsuariosPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {usuarios.map((user) => (
+                {usuariosFiltrados.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center" sx={{ py: 8 }}>
+                      <Typography color="text.secondary">
+                        {currentUser?.rol === 'lider' 
+                          ? 'No hay colaboradores en tu área'
+                          : 'No hay usuarios registrados'}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  usuariosFiltrados.map((user) => (
                   <TableRow key={user.id} hover>
                     <TableCell>
                       <Typography variant="body2" fontWeight={600}>
@@ -215,7 +241,8 @@ export const UsuariosPage = () => {
                       </IconButton>
                     </TableCell>
                   </TableRow>
-                ))}
+                  ))
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -228,14 +255,25 @@ export const UsuariosPage = () => {
         open={Boolean(anchorEl)}
         onClose={handleMenuClose}
       >
-        <MenuItem onClick={handleChangeRole}>
-          <AdminPanelSettings fontSize="small" sx={{ mr: 1 }} />
-          Cambiar Rol
-        </MenuItem>
-        <MenuItem onClick={handleCompletarDatos}>
-          <Edit fontSize="small" sx={{ mr: 1 }} />
-          Editar Información
-        </MenuItem>
+        {currentUser?.rol !== 'lider' && (
+          <MenuItem onClick={handleChangeRole}>
+            <AdminPanelSettings fontSize="small" sx={{ mr: 1 }} />
+            Cambiar Rol
+          </MenuItem>
+        )}
+        {currentUser?.rol !== 'lider' && (
+          <MenuItem onClick={handleCompletarDatos}>
+            <Edit fontSize="small" sx={{ mr: 1 }} />
+            Editar Información
+          </MenuItem>
+        )}
+        {currentUser?.rol === 'lider' && (
+          <MenuItem onClick={handleMenuClose} disabled>
+            <Typography variant="body2" color="text.secondary">
+              Solo vista de consulta
+            </Typography>
+          </MenuItem>
+        )}
       </Menu>
 
       {/* Dialog cambiar rol */}

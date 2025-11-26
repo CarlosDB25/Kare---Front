@@ -7,6 +7,7 @@ export interface Incapacidad {
   usuario_nombre?: string;
   usuario_email?: string;
   usuario_documento?: string;
+  area?: string;
   tipo: TipoIncapacidad;
   fecha_inicio: string;
   fecha_fin: string;
