@@ -58,6 +58,16 @@ export const ReemplazosPage = () => {
     queryFn: () => reemplazoService.getAll(),
   });
 
+  const { data: usuarios = [] } = useQuery({
+    queryKey: ['usuarios'],
+    queryFn: () => usuarioService.getAll(),
+  });
+
+  const { data: incapacidades = [] } = useQuery({
+    queryKey: ['incapacidades'],
+    queryFn: () => incapacidadService.getAll(),
+  });
+
   const finalizarMutation = useMutation({
     mutationFn: ({ id, observaciones }: { id: number; observaciones?: string }) =>
       reemplazoService.finalizar(id, observaciones),
@@ -106,6 +116,21 @@ export const ReemplazosPage = () => {
       day: 'numeric',
     });
   };
+
+  // Filtrar reemplazos por área para líderes
+  const reemplazosVisibles = reemplazos.filter(reemplazo => {
+    // GH y CONTA ven todos
+    if (user?.rol !== 'lider') return true;
+    
+    // Líderes solo ven reemplazos de su área
+    if (!user?.area || usuarios.length === 0 || incapacidades.length === 0) return true;
+    
+    const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
+    if (!incapacidad) return true;
+    
+    const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
+    return colaborador?.area === user.area;
+  });
 
   if (isLoading) {
     return (
@@ -162,7 +187,7 @@ export const ReemplazosPage = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {reemplazos.length === 0 ? (
+                  {reemplazosVisibles.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
                         <Typography color="text.secondary">
@@ -171,7 +196,7 @@ export const ReemplazosPage = () => {
                       </TableCell>
                     </TableRow>
                   ) : (
-                    reemplazos.map((reemplazo) => (
+                    reemplazosVisibles.map((reemplazo) => (
                       <TableRow key={reemplazo.id} hover>
                         <TableCell>
                           <Typography variant="body2" fontWeight={600}>
@@ -234,7 +259,7 @@ export const ReemplazosPage = () => {
 
       {/* Vista Mobile - Cards */}
       <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-        {reemplazos.length === 0 ? (
+        {reemplazosVisibles.length === 0 ? (
           <Card>
             <CardContent sx={{ py: 8, textAlign: 'center' }}>
               <Typography color="text.secondary">
@@ -244,7 +269,7 @@ export const ReemplazosPage = () => {
           </Card>
         ) : (
           <Stack spacing={2}>
-            {reemplazos.map((reemplazo) => (
+            {reemplazosVisibles.map((reemplazo) => (
               <Card key={reemplazo.id}>
                 <CardContent>
                   <Stack spacing={2}>
