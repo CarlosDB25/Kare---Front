@@ -36,7 +36,7 @@ export const NotificacionesPage = () => {
   const queryClient = useQueryClient();
   const { user } = useAuthStore();
 
-  const { data: notificaciones = [], isLoading, error } = useQuery({
+  const { data: notificaciones = [], isLoading } = useQuery({
     queryKey: ['notificaciones', user?.id],
     queryFn: async () => {
       const result = await notificacionService.getAll();
