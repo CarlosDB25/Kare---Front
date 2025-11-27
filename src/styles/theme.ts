@@ -272,13 +272,24 @@ export const getTheme = (mode: PaletteMode) =>
       MuiInputBase: {
         styleOverrides: {
           input: {
+            // Invertir el icono del calendario en modo oscuro
             '&[type="date"]::-webkit-calendar-picker-indicator': {
               filter: mode === 'dark' ? 'invert(1)' : 'none',
               cursor: 'pointer',
             },
+            // Ajustar flechas de input numérico en modo oscuro
             '&[type="number"]::-webkit-inner-spin-button, &[type="number"]::-webkit-outer-spin-button': {
-              opacity: mode === 'dark' ? 0.7 : 1,
+              filter: mode === 'dark' ? 'invert(0.8)' : 'none',
+              opacity: 1,
             },
+          },
+        },
+      },
+      MuiPopover: {
+        styleOverrides: {
+          paper: {
+            backgroundColor: mode === 'dark' ? '#1E293B' : '#FFFFFF',
+            backgroundImage: 'none',
           },
         },
       },
