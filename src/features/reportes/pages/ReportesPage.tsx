@@ -66,10 +66,12 @@ export const ReportesPage = () => {
     if (inicio && fechaIncap < inicio) cumpleFecha = false;
     if (fin && fechaIncap > fin) cumpleFecha = false;
 
-    // Filtrar por área para líderes
-    if (user?.rol === 'lider' && user?.area) {
+    // Filtrar por área para líderes cuando selecciona "equipo"
+    if (user?.rol === 'lider' && tipoReporte === 'equipo' && user?.area) {
       const colaborador = usuarios.find(u => u.id === incap.usuario_id);
-      return cumpleFecha && colaborador && colaborador.area === user.area;
+      if (!colaborador || colaborador.area !== user.area) {
+        return false;
+      }
     }
 
     return cumpleFecha;
@@ -379,6 +381,68 @@ export const ReportesPage = () => {
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#000' }}>Pagado ARL</Typography>
                 </Paper>
+              </Grid>
+            </Grid>
+
+            {/* Gráficas Financieras */}
+            <Grid container spacing={3} sx={{ mb: 4 }}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
+                  Distribución de Pagos
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={[
+                        { name: 'Empresa (67%)', value: statsConta.totalEmpresa, color: '#ff9800' },
+                        { name: 'EPS (100%)', value: statsConta.totalEPS, color: '#0288d1' },
+                        { name: 'ARL (100%)', value: statsConta.totalARL, color: '#f44336' },
+                      ].filter(d => d.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={true}
+                      label={(entry) => entry.name}
+                      outerRadius={90}
+                      dataKey="value"
+                    >
+                      {[
+                        { name: 'Empresa (67%)', value: statsConta.totalEmpresa, color: '#ff9800' },
+                        { name: 'EPS (100%)', value: statsConta.totalEPS, color: '#0288d1' },
+                        { name: 'ARL (100%)', value: statsConta.totalARL, color: '#f44336' },
+                      ].filter(d => d.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', color: '#000' }} />
+                    <Legend wrapperStyle={{ color: '#000' }} />
+                  </PieChart>
+                </ResponsiveContainer>
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
+                  Montos por Categoría
+                </Typography>
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={[
+                    { categoria: 'Empresa', monto: statsConta.totalEmpresa, color: '#ff9800' },
+                    { categoria: 'EPS', monto: statsConta.totalEPS, color: '#0288d1' },
+                    { categoria: 'ARL', monto: statsConta.totalARL, color: '#f44336' },
+                  ].filter(d => d.monto > 0)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="categoria" tick={{ fill: '#000' }} />
+                    <YAxis tick={{ fill: '#000' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', color: '#000' }} />
+                    <Bar dataKey="monto">
+                      {[
+                        { categoria: 'Empresa', monto: statsConta.totalEmpresa, color: '#ff9800' },
+                        { categoria: 'EPS', monto: statsConta.totalEPS, color: '#0288d1' },
+                        { categoria: 'ARL', monto: statsConta.totalARL, color: '#f44336' },
+                      ].filter(d => d.monto > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </Grid>
             </Grid>
 

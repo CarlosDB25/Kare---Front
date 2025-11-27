@@ -182,9 +182,15 @@ export const DashboardPage = () => {
 
   // Datos para gráficas de Líder - Reemplazos por colaborador
   const reemplazosData = useMemo(() => {
-    if (user?.rol !== 'lider' || todosReemplazos.length === 0) return [];
+    if (user?.rol !== 'lider' || todosReemplazos.length === 0 || usuarios.length === 0) return [];
     
-    const colaboradoresConReemplazo = todosReemplazos.reduce((acc: any, reemplazo) => {
+    // Filtrar solo reemplazos del área del líder
+    const reemplazosDelArea = todosReemplazos.filter(reemplazo => {
+      const colaborador = usuarios.find(u => u.id === reemplazo.colaborador_id);
+      return colaborador && colaborador.area === user.area;
+    });
+    
+    const colaboradoresConReemplazo = reemplazosDelArea.reduce((acc: any, reemplazo) => {
       const nombre = reemplazo.nombre_ausente;
       if (!acc[nombre]) {
         acc[nombre] = { nombre, activos: 0, finalizados: 0 };
@@ -195,7 +201,7 @@ export const DashboardPage = () => {
     }, {});
     
     return Object.values(colaboradoresConReemplazo).slice(0, 5); // Top 5
-  }, [todosReemplazos, user]);
+  }, [todosReemplazos, user, usuarios]);
 
   // Datos para gráficas de CONTA - Distribución de costos
   const costosData = useMemo(() => {
@@ -625,7 +631,12 @@ export const DashboardPage = () => {
             {isLider && (
               <StatsCard
                 title="Reemplazos Asignados"
-                value={todosReemplazos.filter(r => r.estado === 'activo').length}
+                value={todosReemplazos.filter(r => {
+                  if (r.estado !== 'activo') return false;
+                  // Filtrar solo reemplazos donde el colaborador reemplazado es del área del líder
+                  const colaborador = usuarios.find(u => u.id === r.colaborador_id);
+                  return colaborador && colaborador.area === user.area;
+                }).length}
                 icon={<PersonAdd sx={{ fontSize: 28, color: '#fff' }} />}
                 bgColor="#673ab7"
               />
