@@ -269,5 +269,18 @@ export const getTheme = (mode: PaletteMode) =>
           },
         },
       },
+      MuiInputBase: {
+        styleOverrides: {
+          input: {
+            '&[type="date"]::-webkit-calendar-picker-indicator': {
+              filter: mode === 'dark' ? 'invert(1)' : 'none',
+              cursor: 'pointer',
+            },
+            '&[type="number"]::-webkit-inner-spin-button, &[type="number"]::-webkit-outer-spin-button': {
+              opacity: mode === 'dark' ? 0.7 : 1,
+            },
+          },
+        },
+      },
     },
   });

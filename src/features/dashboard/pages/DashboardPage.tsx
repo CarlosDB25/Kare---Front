@@ -159,6 +159,7 @@ export const DashboardPage = () => {
     { name: 'Rechazadas', value: stats.rechazadas, color: '#f44336' }, // Rojo (error)
     { name: 'Pagadas', value: stats.pagadas, color: '#9c27b0' }, // Morado (secondary)
     { name: 'Conciliadas', value: stats.conciliadas, color: '#00bcd4' }, // Cyan (info)
+    { name: 'Archivadas', value: stats.archivadas, color: '#607d8b' }, // Gris (neutral)
   ].filter(d => d.value > 0), [stats]);
 
   // Datos para gráfica de barras (tipos de incapacidad) - memoizados con colores
