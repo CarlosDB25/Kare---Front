@@ -58,6 +58,14 @@ export const ReportesPage = () => {
 
   // Filtrar datos por fecha y área (para líderes) - usando useMemo para recalcular correctamente
   const datosFiltrados = useMemo(() => {
+    console.log('🔍 REPORTES - Filtrando datos:', {
+      totalIncapacidades: incapacidades.length,
+      rol: user?.rol,
+      area: user?.area,
+      totalUsuarios: usuarios.length,
+      tipoReporte
+    });
+    
     return incapacidades.filter(incap => {
       const fechaIncap = new Date(incap.fecha_inicio);
       const inicio = fechaInicio ? new Date(fechaInicio) : null;
@@ -70,9 +78,21 @@ export const ReportesPage = () => {
       // Filtrar por área para líderes
       if (user?.rol === 'lider' && user?.area) {
         // Si usuarios aún no están cargados, no filtrar
-        if (usuarios.length === 0) return cumpleFecha;
+        if (usuarios.length === 0) {
+          console.log('⚠️ Usuarios aún no cargados, mostrando todas las incapacidades temporalmente');
+          return cumpleFecha;
+        }
         
         const colaborador = usuarios.find(u => u.id === incap.usuario_id);
+        console.log('👤 Verificando incapacidad:', {
+          incapacidadId: incap.id,
+          usuarioId: incap.usuario_id,
+          colaborador: colaborador?.nombre,
+          areaColaborador: colaborador?.area,
+          areaLider: user.area,
+          coincide: colaborador?.area === user.area
+        });
+        
         if (!colaborador || colaborador.area !== user.area) {
           return false;
         }
@@ -80,7 +100,7 @@ export const ReportesPage = () => {
 
       return cumpleFecha;
     });
-  }, [incapacidades, usuarios, user, fechaInicio, fechaFin]);
+  }, [incapacidades, usuarios, user, fechaInicio, fechaFin, tipoReporte]);
 
   // Calcular estadísticas
   const stats = useMemo(() => ({
