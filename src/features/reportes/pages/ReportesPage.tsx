@@ -28,7 +28,12 @@ export const ReportesPage = () => {
   const reportRef = useRef<HTMLDivElement>(null);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
-  const [tipoReporte, setTipoReporte] = useState('general');
+  const [tipoReporte, setTipoReporte] = useState(() => {
+    // Tipo de reporte por defecto según el rol
+    if (user?.rol === 'conta') return 'financiero';
+    if (user?.rol === 'lider') return 'equipo';
+    return 'general';
+  });
   const [generando, setGenerando] = useState(false);
 
   // Cargar datos según el rol
@@ -193,9 +198,9 @@ export const ReportesPage = () => {
                   value={tipoReporte}
                   onChange={(e) => setTipoReporte(e.target.value)}
                 >
-                  <MenuItem value="general">General</MenuItem>
+                  {user?.rol === 'gh' && <MenuItem value="general">General</MenuItem>}
                   {user?.rol === 'conta' && <MenuItem value="financiero">Financiero</MenuItem>}
-                  {user?.rol === 'lider' && <MenuItem value="equipo">Mi Equipo</MenuItem>}
+                  {user?.rol === 'lider' && <MenuItem value="equipo">Equipo</MenuItem>}
                 </TextField>
               </Grid>
               <Grid size={{ xs: 12, sm: 6, md: 3 }}>
@@ -223,7 +228,7 @@ export const ReportesPage = () => {
             {nombreEmpresa}
           </Typography>
           <Typography variant="h5" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
-            Reporte de {tipoReporte === 'general' ? 'Incapacidades' : tipoReporte === 'financiero' ? 'Análisis Financiero' : 'Mi Equipo'}
+            Reporte de {tipoReporte === 'general' ? 'Incapacidades' : tipoReporte === 'financiero' ? 'Análisis Financiero' : `Equipo - Área ${user?.area || ''}`}
           </Typography>
           <Typography variant="body2" sx={{ color: '#666' }}>
             Generado el {new Date().toLocaleDateString('es-CO', { 
@@ -246,7 +251,7 @@ export const ReportesPage = () => {
 
         <Divider sx={{ mb: 3 }} />
 
-        {/* Reporte General / Equipo */}
+        {/* Reporte General (GH) o Equipo (Lider) */}
         {(tipoReporte === 'general' || tipoReporte === 'equipo') && (
           <>
             {/* Estadísticas Generales */}
