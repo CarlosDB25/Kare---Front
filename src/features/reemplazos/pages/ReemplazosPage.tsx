@@ -433,6 +433,16 @@ const CreateReemplazoDialog = ({ open, onClose }: CreateDialogProps) => {
     enabled: open,
   });
 
+  const { data: reemplazosActivos = [] } = useQuery({
+    queryKey: ['reemplazos'],
+    queryFn: async () => {
+      const todos = await reemplazoService.getAll();
+      // Solo reemplazos activos
+      return todos.filter(r => r.estado === 'activo');
+    },
+    enabled: open,
+  });
+
   const createMutation = useMutation({
     mutationFn: (data: CreateReemplazoData) => reemplazoService.create(data),
     onSuccess: () => {
@@ -470,16 +480,23 @@ const CreateReemplazoDialog = ({ open, onClose }: CreateDialogProps) => {
     createMutation.mutate(formData as CreateReemplazoData);
   };
 
-  // Filtrar solo incapacidades activas que requieren reemplazo
+  // Filtrar incapacidades que NO tienen un reemplazo activo asignado
   const incapacidadesDisponibles = incapacidades.filter(
-    (inc) => ['reportada', 'en_revision', 'validada', 'pagada'].includes(inc.estado)
+    (inc) => {
+      const tieneReemplazoActivo = reemplazosActivos.some(r => r.incapacidad_id === inc.id);
+      return !tieneReemplazoActivo;
+    }
   );
 
-  // Filtrar colaboradores activos, excluyendo al que tiene la incapacidad
-  const colaboradoresDisponibles = usuarios.filter((u) => 
-    u.rol === 'colaborador' && 
-    u.id !== selectedIncapacidad?.usuario_id
-  );
+  // Filtrar colaboradores activos que NO están reemplazando actualmente
+  // y excluyendo al que tiene la incapacidad seleccionada
+  const colaboradoresDisponibles = usuarios.filter((u) => {
+    if (u.rol !== 'colaborador') return false;
+    if (u.id === selectedIncapacidad?.usuario_id) return false;
+    // Verificar que no esté reemplazando activamente
+    const estaReemplazando = reemplazosActivos.some(r => r.colaborador_reemplazo_id === u.id);
+    return !estaReemplazando;
+  });
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
