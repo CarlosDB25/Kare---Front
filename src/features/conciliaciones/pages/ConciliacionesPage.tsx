@@ -29,6 +29,7 @@ import {
 import { Visibility, Calculate } from '@mui/icons-material';
 import { conciliacionService } from '../../../api/services/conciliacionService';
 import { incapacidadService } from '../../../api/services/incapacidadService';
+import { formatCurrency } from '../../../utils';
 import type { Conciliacion, CreateConciliacionData } from '../../../api/services/conciliacionService';
 import type { Incapacidad } from '../../incapacidades/types/incapacidad.types';
 
@@ -129,14 +130,6 @@ export default function ConciliacionesPage() {
     };
 
     crearMutation.mutate(data);
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0
-    }).format(value);
   };
 
   return (

@@ -23,6 +23,7 @@ import { reemplazoService } from '../../../api/services/reemplazoService';
 import { useAuthStore } from '../../../store/authStore';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { formatCurrency } from '../../../utils';
 
 export const ReportesPage = () => {
   const { user } = useAuthStore();
@@ -131,14 +132,6 @@ export const ReportesPage = () => {
     totalEPS: conciliaciones.reduce((sum, c) => sum + c.monto_eps_100, 0),
     totalARL: conciliaciones.reduce((sum, c) => sum + c.monto_arl_100, 0),
   } : null;
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
 
   const generarPDF = async () => {
     if (!reportRef.current) return;

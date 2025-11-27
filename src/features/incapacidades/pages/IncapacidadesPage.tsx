@@ -41,6 +41,7 @@ import type { Incapacidad, UpdateEstadoData } from '../types/incapacidad.types';
 import type { EstadoIncapacidad } from '../../../types/enums';
 import { CreateIncapacidadDialog, IncapacidadDetailDialog } from '../../../components/incapacidades';
 import { EditIncapacidadDialog } from '../../../components/incapacidades/EditIncapacidadDialog';
+import { formatDate } from '../../../utils';
 
 const estadoColors: Record<string, 'default' | 'info' | 'warning' | 'success' | 'error'> = {
   reportada: 'info',
@@ -149,14 +150,6 @@ export const IncapacidadesPage = () => {
     if (selectedIncap?.id) {
       crearConciliacionMutation.mutate(selectedIncap.id);
     }
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
   };
 
   const calculateDays = (inicio: string, fin: string) => {

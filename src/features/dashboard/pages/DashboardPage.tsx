@@ -27,6 +27,7 @@ import { reemplazoService } from '../../../api/services/reemplazoService';
 import { conciliacionService } from '../../../api/services/conciliacionService';
 import { usuarioService } from '../../../api/services/usuarioService';
 import { useAuthStore } from '../../../store/authStore';
+import { formatCurrency } from '../../../utils';
 
 interface StatsCardProps {
   title: string;
@@ -238,14 +239,6 @@ export const DashboardPage = () => {
     
     return porMes.filter(m => m.total > 0);
   }, [conciliaciones, user]);
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
-  };
 
   if (isLoading) {
     return (

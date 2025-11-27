@@ -36,6 +36,7 @@ import { reemplazoService, type Reemplazo, type CreateReemplazoData } from '../.
 import { incapacidadService } from '../../../api/services/incapacidadService';
 import { usuarioService } from '../../../api/services/usuarioService';
 import { useAuthStore } from '../../../store/authStore';
+import { formatDate } from '../../../utils';
 
 const estadoColors: Record<string, 'success' | 'default' | 'error'> = {
   activo: 'success',
@@ -107,14 +108,6 @@ export const ReemplazosPage = () => {
   const handleCancelar = () => {
     setCancelarDialogOpen(true);
     handleMenuClose();
-  };
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
   };
 
   // Filtrar reemplazos por área para líderes

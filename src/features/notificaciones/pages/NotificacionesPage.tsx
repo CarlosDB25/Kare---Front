@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import { notificacionService } from '../../../api/services/notificacionService';
 import { useAuthStore } from '../../../store/authStore';
+import { formatDateTime } from '../../../utils';
 
 const tipoIcons: Record<string, React.ReactNode> = {
   info: <Info color="info" />,
@@ -70,16 +71,6 @@ export const NotificacionesPage = () => {
       queryClient.invalidateQueries({ queryKey: ['notificaciones', 'unread-count'] });
     },
   });
-
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   const unreadCount = notificaciones.filter((n) => n.leida === 0).length;
 
@@ -179,7 +170,7 @@ export const NotificacionesPage = () => {
                           {notif.mensaje}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-                          {formatDate(notif.created_at)}
+                          {formatDateTime(notif.created_at)}
                         </Typography>
                       </Box>
                     </Stack>

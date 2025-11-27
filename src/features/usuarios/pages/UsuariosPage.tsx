@@ -36,6 +36,7 @@ import type { Usuario } from '../../../api/services/usuarioService';
 import { CompletarDatosDialog } from '../../../components/usuarios/CompletarDatosDialog';
 import type { User } from '../../auth/types/auth.types';
 import { useAuthStore } from '../../../store/authStore';
+import { formatCurrency } from '../../../utils';
 
 const rolColors: Record<string, 'default' | 'primary' | 'secondary' | 'success'> = {
   colaborador: 'default',
@@ -142,14 +143,6 @@ export const UsuariosPage = () => {
     if (selectedUser) {
       completarDatosMutation.mutate({ id: selectedUser.id, datos });
     }
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(value);
   };
 
   if (isLoading) {

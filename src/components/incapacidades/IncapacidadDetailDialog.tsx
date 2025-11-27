@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import type { Incapacidad } from '../../features/incapacidades/types/incapacidad.types';
 import { incapacidadService } from '../../api/services/incapacidadService';
+import { formatDate } from '../../utils';
 
 interface Props {
   incapacidad: Incapacidad;
@@ -66,14 +67,6 @@ export const IncapacidadDetailDialog = ({ incapacidad, open, onClose }: Props) =
   const [ocrResult, setOcrResult] = useState<any>(null);
   const [ocrError, setOcrError] = useState('');
   
-  const formatDate = (date: string) => {
-    return new Date(date).toLocaleDateString('es-CO', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
-
   const calculateDays = () => {
     const start = new Date(incapacidad.fecha_inicio);
     const end = new Date(incapacidad.fecha_fin);

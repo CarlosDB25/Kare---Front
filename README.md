@@ -10,19 +10,23 @@ KARE es una aplicación web para la gestión integral de incapacidades médicas,
 - **Roles diferenciados**: Colaborador, Líder, Gestión Humana (GH), Contabilidad
 - **Registro público**: Los usuarios pueden auto-registrarse como colaboradores
 - **Gestión de perfiles**: Información completa de empleados (documento, área, cargo, salario, IBC)
+- **Filtrado por área**: Líderes solo ven usuarios de su área asignada
 
 ### 📄 Incapacidades
 - **Creación y seguimiento**: Los colaboradores pueden reportar incapacidades
 - **Análisis con OCR**: Extracción automática de datos de documentos médicos
-- **Estados del ciclo**: Pendiente → Aprobada → Radicada → Pagada
+- **Estados del ciclo**: Reportada → En Revisión → Validada → Rechazada/Pagada → Conciliada → Archivada
 - **Validaciones automáticas**: Verificación de datos extraídos vs perfil del usuario
 - **Adjuntos**: Soporte para documentos PDF e imágenes (JPG, PNG)
+- **Filtrado por área**: Líderes solo ven incapacidades de colaboradores de su área
 
 ### 🔄 Reemplazos
-- **Asignación inteligente**: Selección de reemplazos disponibles
+- **Asignación inteligente**: Selección de reemplazos disponibles (sin incapacidad activa, no reemplazando a nadie)
 - **Gestión de fechas**: Control de períodos de reemplazo
-- **Extensiones**: Posibilidad de ampliar días de reemplazo
+- **Finalización y cancelación**: Control del ciclo de vida del reemplazo
 - **Notificaciones**: Alertas automáticas para todos los involucrados
+- **Filtrado por área**: Líderes solo gestionan reemplazos de su área
+- **Disponibilidad automática**: Solo aparecen incapacidades y colaboradores disponibles
 
 ### 💰 Conciliaciones
 - **Cálculo automático**: Genera el desglose financiero de cada incapacidad
@@ -38,8 +42,25 @@ KARE es una aplicación web para la gestión integral de incapacidades médicas,
 
 ### 📊 Dashboard
 - **Estadísticas en tiempo real**: Resumen de incapacidades por estado
-- **Filtros por período**: Último mes, últimos 3 meses, último año
-- **Visualización gráfica**: Gráficos de distribución y tendencias
+- **Dashboards personalizados por rol**:
+  - **Líderes**: Solo datos de su área + gráficas (estados, reemplazos por colaborador)
+  - **Contabilidad**: Datos globales + gráficas financieras (distribución costos, conciliaciones/mes)
+  - **GH**: Datos completos del sistema + gráficas generales
+- **Visualización gráfica**: Gráficos de pastel y barras según rol
+
+### 📊 Reportes
+- **Generación de PDF**: Reportes exportables en formato PDF
+- **Reportes por rol**:
+  - **GH**: Reporte General (todo el sistema)
+  - **Contabilidad**: Reporte Financiero (conciliaciones y costos)
+  - **Líderes**: Reporte de Equipo (solo su área)
+- **Filtros**: Por rango de fechas
+- **Estadísticas y gráficas**: Cards resumen + gráficas visuales
+- **Personalización**: Nombre de empresa configurable
+
+### ⚙️ Configuración
+- **Nombre de empresa**: Configurable por GH para reportes
+- **Persistencia**: Guardado en localStorage
 
 ## 🛠️ Tecnologías
 
@@ -65,6 +86,9 @@ KARE es una aplicación web para la gestión integral de incapacidades médicas,
 ### Utilidades
 - **date-fns**: Manipulación de fechas
 - **react-hot-toast**: Notificaciones toast elegantes
+- **jsPDF**: Generación de documentos PDF
+- **html2canvas**: Captura de elementos HTML para PDF
+- **recharts**: Librería de gráficas para visualizaciones
 
 ## 📁 Estructura del Proyecto
 
@@ -128,13 +152,19 @@ Kare-front/
 │   │   │   └── pages/
 │   │   │       └── UsuariosPage.tsx
 │   │   │
-│   │   └── conciliaciones/
-│   │       ├── pages/
-│   │       │   └── ConciliacionesPage.tsx
-│   │       ├── services/
-│   │       │   └── conciliacionService.ts
-│   │       └── types/
-│   │           └── conciliacion.types.ts
+│   │   ├── conciliaciones/
+│   │   │   ├── pages/
+│   │   │   │   └── ConciliacionesPage.tsx
+│   │   │   └── types/
+│   │   │       └── conciliacion.types.ts
+│   │   │
+│   │   ├── reportes/
+│   │   │   └── pages/
+│   │   │       └── ReportesPage.tsx
+│   │   │
+│   │   └── configuracion/
+│   │       └── pages/
+│   │           └── ConfiguracionPage.tsx
 │   │
 │   ├── config/                   # Configuraciones globales
 │   │   ├── env.ts               # Variables de entorno
@@ -224,9 +254,9 @@ npm run lint         # Ejecuta ESLint para verificar código
 | Rol | Código | Permisos |
 |-----|--------|----------|
 | **Colaborador** | `colaborador` | - Crear incapacidades<br>- Ver sus propias incapacidades<br>- Ver notificaciones |
-| **Líder** | `lider` | - Todo lo de Colaborador<br>- Ver reemplazos<br>- Crear reemplazos<br>- Ver usuarios |
-| **Gestión Humana** | `gh` | - Todo lo anterior<br>- Aprobar/rechazar incapacidades<br>- Análisis OCR de documentos<br>- Gestionar usuarios<br>- Editar información de usuarios |
-| **Contabilidad** | `conta` | - Ver incapacidades<br>- Gestionar conciliaciones<br>- Ver reemplazos |
+| **Líder** | `lider` | - Todo lo de Colaborador<br>- Ver incapacidades de su área<br>- Ver reemplazos de su área<br>- Crear/finalizar/cancelar reemplazos<br>- Ver usuarios de su área<br>- Dashboard y reportes de su área |
+| **Gestión Humana** | `gh` | - Todo lo anterior (sin restricción de área)<br>- Aprobar/rechazar incapacidades<br>- Análisis OCR de documentos<br>- Gestionar todos los usuarios<br>- Editar información de usuarios<br>- Configurar sistema<br>- Dashboard y reportes globales |
+| **Contabilidad** | `conta` | - Ver todas las incapacidades<br>- Gestionar conciliaciones<br>- Ver reemplazos<br>- Dashboard financiero<br>- Reportes financieros |
 
 ### Flujo de Autenticación
 
@@ -250,16 +280,41 @@ npm run lint         # Ejecuta ESLint para verificar código
 ```
 Colaborador crea incapacidad
     ↓
-Estado: PENDIENTE
+Estado: REPORTADA
     ↓
-GH revisa → APROBADA / RECHAZADA
+GH revisa → EN_REVISION
     ↓
-GH radica → RADICADA
+GH valida → VALIDADA / RECHAZADA
     ↓
 Conta verifica pago → PAGADA
+    ↓
+Sistema genera conciliación → CONCILIADA
+    ↓
+Opcional: ARCHIVADA (para historial)
 ```
 
-### 2. Análisis OCR
+### 2. Gestión de Reemplazos (con Filtrado por Área)
+
+```
+Líder identifica incapacidad de su área
+    ↓
+Selecciona incapacidad disponible (sin reemplazo activo)
+    ↓
+Selecciona colaborador disponible:
+  - Sin incapacidad activa
+  - No está reemplazando a nadie
+  - Es colaborador activo
+    ↓
+Define fechas y funciones
+    ↓
+Crea reemplazo → Notificaciones enviadas
+    ↓
+Opciones:
+  - Finalizar (cuando regresa el colaborador)
+  - Cancelar (con motivo obligatorio)
+```
+
+### 3. Análisis OCR
 
 ```
 GH selecciona incapacidad
@@ -273,6 +328,32 @@ Sistema compara con perfil del colaborador
 Muestra similitudes/diferencias
     ↓
 GH valida y aprueba
+```
+
+### 4. Generación de Reportes
+
+```
+Usuario accede a Reportes
+    ↓
+Sistema asigna tipo según rol:
+  - GH: Reporte General
+  - Conta: Reporte Financiero
+  - Líder: Reporte de Equipo (su área)
+    ↓
+Usuario selecciona filtros (fechas)
+    ↓
+Click en "Generar PDF"
+    ↓
+Sistema filtra datos:
+  - Líder: Solo datos de su área
+  - Otros: Según permisos
+    ↓
+Genera PDF con:
+  - Cards estadísticas
+  - Gráficas visuales
+  - Nombre de empresa
+    ↓
+Descarga automática
 ```
 
 ### 3. Gestión de Reemplazos
@@ -335,12 +416,14 @@ INCAPACIDADES: {
 REEMPLAZOS: {
   BASE: '/reemplazos',
   BY_ID: (id) => `/reemplazos/${id}`,
-  EXTEND: (id) => `/reemplazos/${id}/extender`,
+  FINALIZAR: (id) => `/reemplazos/${id}/finalizar`,
+  CANCELAR: (id) => `/reemplazos/${id}/cancelar`,
 }
 
 NOTIFICACIONES: {
   BASE: '/notificaciones',
   MARK_READ: (id) => `/notificaciones/${id}/marcar-leida`,
+  MARK_ALL_READ: '/notificaciones/marcar-todas-leidas',
   UNREAD_COUNT: '/notificaciones/no-leidas/cantidad',
 }
 
@@ -348,6 +431,12 @@ USUARIOS: {
   BASE: '/usuarios',
   BY_ID: (id) => `/usuarios/${id}`,
   UPDATE_DATA: (id) => `/usuarios/${id}/completar-datos`,
+  CHANGE_ROLE: (id) => `/usuarios/${id}/cambiar-rol`,
+}
+
+CONCILIACIONES: {
+  BASE: '/conciliaciones',
+  BY_ID: (id) => `/conciliaciones/${id}`,
 }
 ```
 
