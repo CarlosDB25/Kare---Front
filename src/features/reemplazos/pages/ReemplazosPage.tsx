@@ -117,7 +117,14 @@ export const ReemplazosPage = () => {
 
   return (
     <Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
+      <Box 
+        display="flex" 
+        justifyContent="space-between" 
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        flexDirection={{ xs: 'column', sm: 'row' }}
+        gap={2}
+        mb={4}
+      >
         <Box>
           <Typography variant="h4" fontWeight={700} gutterBottom>
             Reemplazos Temporales
@@ -131,96 +138,175 @@ export const ReemplazosPage = () => {
             variant="contained"
             startIcon={<Add />}
             onClick={() => setCreateDialogOpen(true)}
-            sx={{ px: 3, py: 1.5 }}
+            sx={{ px: 3, py: 1.5, width: { xs: '100%', sm: 'auto' } }}
           >
             Nuevo Reemplazo
           </Button>
         )}
       </Box>
 
-      <Card>
-        <CardContent sx={{ p: 0 }}>
-          <TableContainer>
-            <Table>
-              <TableHead>
-                <TableRow sx={{ bgcolor: 'background.default' }}>
-                  <TableCell sx={{ fontWeight: 700 }}>Colaborador Ausente</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Colaborador Reemplazo</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Período</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Funciones</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }}>Estado</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {reemplazos.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
-                      <Typography color="text.secondary">
-                        No hay reemplazos registrados
-                      </Typography>
-                    </TableCell>
+      {/* Vista Desktop - Tabla */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Card>
+          <CardContent sx={{ p: 0 }}>
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow sx={{ bgcolor: 'background.default' }}>
+                    <TableCell sx={{ fontWeight: 700 }}>Colaborador Ausente</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Colaborador Reemplazo</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Período</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Funciones</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }}>Estado</TableCell>
+                    <TableCell sx={{ fontWeight: 700 }} align="right">Acciones</TableCell>
                   </TableRow>
-                ) : (
-                  reemplazos.map((reemplazo) => (
-                    <TableRow key={reemplazo.id} hover>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={600}>
-                          {reemplazo.nombre_ausente}
+                </TableHead>
+                <TableBody>
+                  {reemplazos.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={6} align="center" sx={{ py: 8 }}>
+                        <Typography color="text.secondary">
+                          No hay reemplazos registrados
                         </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight={600}>
-                          {reemplazo.nombre_reemplazo}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body2">
-                          {formatDate(reemplazo.fecha_inicio)}
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          {formatDate(reemplazo.fecha_fin)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            maxWidth: 200,
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                          }}
-                        >
-                          {reemplazo.funciones_asignadas}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Chip
-                          label={reemplazo.estado.toUpperCase()}
-                          color={estadoColors[reemplazo.estado]}
-                          size="small"
-                          sx={{ fontWeight: 600 }}
-                        />
-                      </TableCell>
-                      <TableCell align="right">
-                        {reemplazo.estado === 'activo' && user?.rol === 'lider' && (
-                          <IconButton
-                            size="small"
-                            onClick={(e) => handleMenuOpen(e, reemplazo)}
-                          >
-                            <MoreVert />
-                          </IconButton>
-                        )}
                       </TableCell>
                     </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </CardContent>
-      </Card>
+                  ) : (
+                    reemplazos.map((reemplazo) => (
+                      <TableRow key={reemplazo.id} hover>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {reemplazo.nombre_ausente}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2" fontWeight={600}>
+                            {reemplazo.nombre_reemplazo}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography variant="body2">
+                            {formatDate(reemplazo.fecha_inicio)}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {formatDate(reemplazo.fecha_fin)}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              maxWidth: 200,
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            {reemplazo.funciones_asignadas}
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Chip
+                            label={reemplazo.estado.toUpperCase()}
+                            color={estadoColors[reemplazo.estado]}
+                            size="small"
+                            sx={{ fontWeight: 600 }}
+                          />
+                        </TableCell>
+                        <TableCell align="right">
+                          {reemplazo.estado === 'activo' && user?.rol === 'lider' && (
+                            <IconButton
+                              size="small"
+                              onClick={(e) => handleMenuOpen(e, reemplazo)}
+                            >
+                              <MoreVert />
+                            </IconButton>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </CardContent>
+        </Card>
+      </Box>
+
+      {/* Vista Mobile - Cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {reemplazos.length === 0 ? (
+          <Card>
+            <CardContent sx={{ py: 8, textAlign: 'center' }}>
+              <Typography color="text.secondary">
+                No hay reemplazos registrados
+              </Typography>
+            </CardContent>
+          </Card>
+        ) : (
+          <Stack spacing={2}>
+            {reemplazos.map((reemplazo) => (
+              <Card key={reemplazo.id}>
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Box flex={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          Ausente
+                        </Typography>
+                        <Typography variant="subtitle2" fontWeight={700}>
+                          {reemplazo.nombre_ausente}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Reemplazo: {reemplazo.nombre_reemplazo}
+                        </Typography>
+                      </Box>
+                      {reemplazo.estado === 'activo' && user?.rol === 'lider' && (
+                        <IconButton
+                          size="small"
+                          onClick={(e) => handleMenuOpen(e, reemplazo)}
+                        >
+                          <MoreVert />
+                        </IconButton>
+                      )}
+                    </Stack>
+
+                    <Chip
+                      label={reemplazo.estado.toUpperCase()}
+                      color={estadoColors[reemplazo.estado]}
+                      size="small"
+                      sx={{ fontWeight: 600, width: 'fit-content' }}
+                    />
+
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Período
+                      </Typography>
+                      <Typography variant="body2">
+                        {formatDate(reemplazo.fecha_inicio)} - {formatDate(reemplazo.fecha_fin)}
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">
+                        Funciones Asignadas
+                      </Typography>
+                      <Typography variant="body2" sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        display: '-webkit-box',
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: 'vertical',
+                      }}>
+                        {reemplazo.funciones_asignadas}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </Box>
 
       {/* Menu contextual */}
       <Menu

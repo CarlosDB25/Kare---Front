@@ -196,68 +196,155 @@ export default function ConciliacionesPage() {
         </Alert>
       )}
 
-      <Paper sx={{ p: 2 }}>
-        <TableContainer>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
-                <TableCell>Colaborador</TableCell>
-                <TableCell>Tipo</TableCell>
-                <TableCell>Días</TableCell>
-                <TableCell>IBC</TableCell>
-                <TableCell>Total a Pagar</TableCell>
-                <TableCell>Fecha</TableCell>
-                <TableCell>Acciones</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {isLoading ? (
+      {/* Vista Desktop - Tabla */}
+      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Paper sx={{ p: 2 }}>
+          <TableContainer>
+            <Table>
+              <TableHead>
                 <TableRow>
-                  <TableCell colSpan={8} align="center">Cargando...</TableCell>
+                  <TableCell>ID</TableCell>
+                  <TableCell>Colaborador</TableCell>
+                  <TableCell>Tipo</TableCell>
+                  <TableCell>Días</TableCell>
+                  <TableCell>IBC</TableCell>
+                  <TableCell>Total a Pagar</TableCell>
+                  <TableCell>Fecha</TableCell>
+                  <TableCell>Acciones</TableCell>
                 </TableRow>
-              ) : conciliaciones.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} align="center">
-                    No hay conciliaciones registradas
-                  </TableCell>
-                </TableRow>
-              ) : (
-                conciliaciones.map((conc) => (
-                  <TableRow key={conc.id} hover>
-                    <TableCell>{conc.id}</TableCell>
-                    <TableCell>{conc.colaborador_nombre}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={conc.incapacidad_tipo}
-                        size="small"
-                        color={conc.incapacidad_tipo === 'ARL' ? 'error' : 'primary'}
-                      />
+              </TableHead>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">Cargando...</TableCell>
+                  </TableRow>
+                ) : conciliaciones.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No hay conciliaciones registradas
                     </TableCell>
-                    <TableCell>{conc.dias_incapacidad}</TableCell>
-                    <TableCell>{formatCurrency(conc.ibc)}</TableCell>
-                    <TableCell sx={{ fontWeight: 600 }}>
-                      {formatCurrency(conc.total_a_pagar)}
-                    </TableCell>
-                    <TableCell>
-                      {new Date(conc.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
+                  </TableRow>
+                ) : (
+                  conciliaciones.map((conc) => (
+                    <TableRow key={conc.id} hover>
+                      <TableCell>{conc.id}</TableCell>
+                      <TableCell>{conc.colaborador_nombre}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={conc.incapacidad_tipo}
+                          size="small"
+                          color={conc.incapacidad_tipo === 'ARL' ? 'error' : 'primary'}
+                        />
+                      </TableCell>
+                      <TableCell>{conc.dias_incapacidad}</TableCell>
+                      <TableCell>{formatCurrency(conc.ibc)}</TableCell>
+                      <TableCell sx={{ fontWeight: 600 }}>
+                        {formatCurrency(conc.total_a_pagar)}
+                      </TableCell>
+                      <TableCell>
+                        {new Date(conc.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton
+                          size="small"
+                          color="primary"
+                          onClick={() => handleVerDetalle(conc)}
+                        >
+                          <Visibility />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Paper>
+      </Box>
+
+      {/* Vista Mobile - Cards */}
+      <Box sx={{ display: { xs: 'block', md: 'none' } }}>
+        {isLoading ? (
+          <Paper sx={{ p: 2, textAlign: 'center' }}>
+            <Typography>Cargando...</Typography>
+          </Paper>
+        ) : conciliaciones.length === 0 ? (
+          <Paper sx={{ p: 8, textAlign: 'center' }}>
+            <Typography color="text.secondary">
+              No hay conciliaciones registradas
+            </Typography>
+          </Paper>
+        ) : (
+          <Stack spacing={2}>
+            {conciliaciones.map((conc) => (
+              <Card key={conc.id} onClick={() => handleVerDetalle(conc)} sx={{ cursor: 'pointer', '&:hover': { boxShadow: 4 } }}>
+                <CardContent>
+                  <Stack spacing={2}>
+                    <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+                      <Box flex={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          #{conc.id}
+                        </Typography>
+                        <Typography variant="subtitle2" fontWeight={700}>
+                          {conc.colaborador_nombre}
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          {new Date(conc.created_at).toLocaleDateString()}
+                        </Typography>
+                      </Box>
                       <IconButton
                         size="small"
                         color="primary"
-                        onClick={() => handleVerDetalle(conc)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleVerDetalle(conc);
+                        }}
                       >
                         <Visibility />
                       </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
+                    </Stack>
+
+                    <Chip
+                      label={conc.incapacidad_tipo}
+                      size="small"
+                      color={conc.incapacidad_tipo === 'ARL' ? 'error' : 'primary'}
+                      sx={{ width: 'fit-content' }}
+                    />
+
+                    <Stack direction="row" spacing={2}>
+                      <Box flex={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          Días
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600}>
+                          {conc.dias_incapacidad}
+                        </Typography>
+                      </Box>
+                      <Box flex={1}>
+                        <Typography variant="caption" color="text.secondary">
+                          IBC
+                        </Typography>
+                        <Typography variant="body2" fontWeight={600}>
+                          {formatCurrency(conc.ibc)}
+                        </Typography>
+                      </Box>
+                    </Stack>
+
+                    <Box sx={{ bgcolor: 'success.light', p: 1.5, borderRadius: 1 }}>
+                      <Typography variant="caption" color="success.dark">
+                        Total a Pagar
+                      </Typography>
+                      <Typography variant="h6" fontWeight={700} color="success.dark">
+                        {formatCurrency(conc.total_a_pagar)}
+                      </Typography>
+                    </Box>
+                  </Stack>
+                </CardContent>
+              </Card>
+            ))}
+          </Stack>
+        )}
+      </Box>
 
       {/* Dialog de detalles */}
       <Dialog
