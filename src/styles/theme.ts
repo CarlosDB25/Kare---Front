@@ -211,6 +211,14 @@ export const getTheme = (mode: PaletteMode) =>
               borderRadius: 12,
               transition: 'all 0.3s ease',
               backgroundColor: mode === 'light' ? '#FFFFFF' : 'rgba(255,255,255,0.05)',
+              // Estilos para inputs de tipo date
+              '& input[type="date"]': {
+                colorScheme: mode === 'dark' ? 'dark' : 'light',
+              },
+              // Estilos para inputs de tipo number
+              '& input[type="number"]': {
+                colorScheme: mode === 'dark' ? 'dark' : 'light',
+              },
               '&:hover': {
                 backgroundColor: mode === 'light' ? '#FAFAFA' : 'rgba(255,255,255,0.08)',
                 '& .MuiOutlinedInput-notchedOutline': {
@@ -266,28 +274,6 @@ export const getTheme = (mode: PaletteMode) =>
             boxShadow: mode === 'light'
               ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
               : '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
-          },
-        },
-      },
-      MuiInputBase: {
-        styleOverrides: {
-          input: {
-            // Invertir el icono del calendario en modo oscuro
-            '&[type="date"]::-webkit-calendar-picker-indicator': {
-              filter: mode === 'dark' ? 'invert(1)' : 'none',
-              cursor: 'pointer',
-            },
-            // Ajustar flechas de input numérico en modo oscuro
-            '&[type="number"]::-webkit-inner-spin-button, &[type="number"]::-webkit-outer-spin-button': {
-              filter: mode === 'dark' ? 'invert(0.8)' : 'none',
-              opacity: 1,
-            },
-          },
-        },
-      },
-      MuiPopover: {
-        styleOverrides: {
-          paper: {
             backgroundColor: mode === 'dark' ? '#1E293B' : '#FFFFFF',
             backgroundImage: 'none',
           },
