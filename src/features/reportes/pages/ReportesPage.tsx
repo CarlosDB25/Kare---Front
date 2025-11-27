@@ -19,6 +19,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Ba
 import { incapacidadService } from '../../../api/services/incapacidadService';
 import { conciliacionService } from '../../../api/services/conciliacionService';
 import { usuarioService } from '../../../api/services/usuarioService';
+import { reemplazoService } from '../../../api/services/reemplazoService';
 import { useAuthStore } from '../../../store/authStore';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -51,6 +52,12 @@ export const ReportesPage = () => {
   const { data: usuarios = [] } = useQuery({
     queryKey: ['usuarios'],
     queryFn: usuarioService.getAll,
+  });
+
+  const { data: reemplazos = [] } = useQuery({
+    queryKey: ['reemplazos'],
+    queryFn: reemplazoService.getAll,
+    enabled: user?.rol === 'lider',
   });
 
   // Obtener nombre de la empresa del localStorage o usar default
@@ -103,6 +110,19 @@ export const ReportesPage = () => {
     { tipo: 'EPS', cantidad: stats.eps, color: '#2196f3' },
     { tipo: 'ARL', cantidad: stats.arl, color: '#f44336' },
   ].filter(d => d.cantidad > 0), [stats]);
+
+  // Estadísticas de reemplazos (Lider)
+  const reemplazosAsignados = useMemo(() => {
+    if (user?.rol !== 'lider' || !user?.area || usuarios.length === 0 || incapacidades.length === 0) return 0;
+    
+    return reemplazos.filter(r => {
+      if (r.estado !== 'activo') return false;
+      const incapacidad = incapacidades.find(i => i.id === r.incapacidad_id);
+      if (!incapacidad) return true;
+      const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
+      return !colaborador || colaborador.area === user.area;
+    }).length;
+  }, [reemplazos, incapacidades, usuarios, user]);
 
   // Estadísticas de conciliaciones (CONTA)
   const statsConta = user?.rol === 'conta' ? {
@@ -295,6 +315,16 @@ export const ReportesPage = () => {
                   <Typography variant="body2" sx={{ color: '#000' }}>Rechazadas</Typography>
                 </Paper>
               </Grid>
+              {tipoReporte === 'equipo' && user?.rol === 'lider' && (
+                <Grid size={{ xs: 6, md: 3 }}>
+                  <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f5f5f5' }}>
+                    <Typography variant="h4" fontWeight={700} sx={{ color: '#673ab7' }}>
+                      {reemplazosAsignados}
+                    </Typography>
+                    <Typography variant="body2" sx={{ color: '#000' }}>Reemplazos Asignados</Typography>
+                  </Paper>
+                </Grid>
+              )}
             </Grid>
 
             {/* Gráficas */}
