@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
   Box,
@@ -56,29 +56,34 @@ export const ReportesPage = () => {
   // Obtener nombre de la empresa del localStorage o usar default
   const nombreEmpresa = localStorage.getItem('nombreEmpresa') || 'KARE - Sistema de Gestión';
 
-  // Filtrar datos por fecha y área (para líderes)
-  const datosFiltrados = incapacidades.filter(incap => {
-    const fechaIncap = new Date(incap.fecha_inicio);
-    const inicio = fechaInicio ? new Date(fechaInicio) : null;
-    const fin = fechaFin ? new Date(fechaFin) : null;
+  // Filtrar datos por fecha y área (para líderes) - usando useMemo para recalcular correctamente
+  const datosFiltrados = useMemo(() => {
+    return incapacidades.filter(incap => {
+      const fechaIncap = new Date(incap.fecha_inicio);
+      const inicio = fechaInicio ? new Date(fechaInicio) : null;
+      const fin = fechaFin ? new Date(fechaFin) : null;
 
-    let cumpleFecha = true;
-    if (inicio && fechaIncap < inicio) cumpleFecha = false;
-    if (fin && fechaIncap > fin) cumpleFecha = false;
+      let cumpleFecha = true;
+      if (inicio && fechaIncap < inicio) cumpleFecha = false;
+      if (fin && fechaIncap > fin) cumpleFecha = false;
 
-    // Filtrar por área para líderes (siempre, no solo cuando tipoReporte === 'equipo')
-    if (user?.rol === 'lider' && user?.area && usuarios.length > 0) {
-      const colaborador = usuarios.find(u => u.id === incap.usuario_id);
-      if (!colaborador || colaborador.area !== user.area) {
-        return false;
+      // Filtrar por área para líderes
+      if (user?.rol === 'lider' && user?.area) {
+        // Si usuarios aún no están cargados, no filtrar
+        if (usuarios.length === 0) return cumpleFecha;
+        
+        const colaborador = usuarios.find(u => u.id === incap.usuario_id);
+        if (!colaborador || colaborador.area !== user.area) {
+          return false;
+        }
       }
-    }
 
-    return cumpleFecha;
-  });
+      return cumpleFecha;
+    });
+  }, [incapacidades, usuarios, user, fechaInicio, fechaFin]);
 
   // Calcular estadísticas
-  const stats = {
+  const stats = useMemo(() => ({
     total: datosFiltrados.length,
     reportadas: datosFiltrados.filter(i => i.estado === 'reportada').length,
     en_revision: datosFiltrados.filter(i => i.estado === 'en_revision').length,
@@ -87,20 +92,20 @@ export const ReportesPage = () => {
     pagadas: datosFiltrados.filter(i => i.estado === 'pagada').length,
     eps: datosFiltrados.filter(i => i.tipo === 'EPS').length,
     arl: datosFiltrados.filter(i => i.tipo === 'ARL').length,
-  };
+  }), [datosFiltrados]);
 
-  const pieData = [
+  const pieData = useMemo(() => [
     { name: 'Reportadas', value: stats.reportadas, color: '#2196f3' },
     { name: 'En Revisión', value: stats.en_revision, color: '#ff9800' },
     { name: 'Validadas', value: stats.validadas, color: '#4caf50' },
     { name: 'Rechazadas', value: stats.rechazadas, color: '#f44336' },
     { name: 'Pagadas', value: stats.pagadas, color: '#9c27b0' },
-  ].filter(d => d.value > 0);
+  ].filter(d => d.value > 0), [stats]);
 
-  const tipoData = [
+  const tipoData = useMemo(() => [
     { tipo: 'EPS', cantidad: stats.eps, color: '#2196f3' },
     { tipo: 'ARL', cantidad: stats.arl, color: '#f44336' },
-  ].filter(d => d.cantidad > 0);
+  ].filter(d => d.cantidad > 0), [stats]);
 
   // Estadísticas de conciliaciones (CONTA)
   const statsConta = user?.rol === 'conta' ? {

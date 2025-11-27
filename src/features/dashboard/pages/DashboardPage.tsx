@@ -184,19 +184,24 @@ export const DashboardPage = () => {
   const reemplazosData = useMemo(() => {
     if (user?.rol !== 'lider' || todosReemplazos.length === 0) return [];
     
-    // Filtrar solo reemplazos del área del líder si hay datos de incapacidades y usuarios
-    let reemplazosDelArea = todosReemplazos;
+    // Si no hay usuarios o incapacidades, mostrar todos los reemplazos sin filtrar
+    // (cuando carguen, se actualizará automáticamente)
+    let reemplazosParaMostrar = todosReemplazos;
     
-    if (usuarios.length > 0 && incapacidades.length > 0) {
-      reemplazosDelArea = todosReemplazos.filter(reemplazo => {
+    // Solo filtrar si tenemos todos los datos necesarios
+    if (usuarios.length > 0 && incapacidades.length > 0 && user.area) {
+      reemplazosParaMostrar = todosReemplazos.filter(reemplazo => {
         const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
-        if (!incapacidad) return false;
+        if (!incapacidad) {
+          // Si no encontramos la incapacidad, incluir el reemplazo de todas formas
+          return true;
+        }
         const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
         return colaborador && colaborador.area === user.area;
       });
     }
     
-    const colaboradoresConReemplazo = reemplazosDelArea.reduce((acc: any, reemplazo) => {
+    const colaboradoresConReemplazo = reemplazosParaMostrar.reduce((acc: any, reemplazo) => {
       const nombre = reemplazo.nombre_ausente;
       if (!acc[nombre]) {
         acc[nombre] = { nombre, activos: 0, finalizados: 0 };
@@ -639,11 +644,16 @@ export const DashboardPage = () => {
                 title="Reemplazos Asignados"
                 value={todosReemplazos.filter(r => {
                   if (r.estado !== 'activo') return false;
+                  
+                  // Si no hay datos suficientes, contar todos los activos
+                  if (incapacidades.length === 0 || usuarios.length === 0) return true;
+                  
                   // Filtrar solo reemplazos donde el colaborador reemplazado es del área del líder
                   const incapacidad = incapacidades.find(i => i.id === r.incapacidad_id);
-                  if (!incapacidad) return false;
+                  if (!incapacidad) return true; // Incluir si no encontramos la incapacidad
+                  
                   const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
-                  return colaborador && colaborador.area === user.area;
+                  return !colaborador || colaborador.area === user.area;
                 }).length}
                 icon={<PersonAdd sx={{ fontSize: 28, color: '#fff' }} />}
                 bgColor="#673ab7"
