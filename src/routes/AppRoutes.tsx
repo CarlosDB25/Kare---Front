@@ -9,6 +9,8 @@ import { NotificacionesPage } from '../features/notificaciones/pages/Notificacio
 import { UsuariosPage } from '../features/usuarios/pages/UsuariosPage';
 import { ReemplazosPage } from '../features/reemplazos/pages/ReemplazosPage';
 import ConciliacionesPage from '../features/conciliaciones/pages/ConciliacionesPage';
+import { ReportesPage } from '../features/reportes/pages/ReportesPage';
+import { ConfiguracionPage } from '../features/configuracion/pages/ConfiguracionPage';
 
 const UnauthorizedPage = () => <div>No autorizado</div>;
 
@@ -56,6 +58,24 @@ export const AppRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={['gh', 'lider', 'conta']}>
                 <UsuariosPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="reportes"
+            element={
+              <ProtectedRoute allowedRoles={['gh', 'lider', 'conta']}>
+                <ReportesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="configuracion"
+            element={
+              <ProtectedRoute allowedRoles={['gh']}>
+                <ConfiguracionPage />
               </ProtectedRoute>
             }
           />

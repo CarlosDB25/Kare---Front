@@ -31,6 +31,8 @@ import {
   Brightness7,
   SwapHoriz,
   AccountBalance,
+  Assessment,
+  Settings,
 } from '@mui/icons-material';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
@@ -260,6 +262,62 @@ export const AppLayout = () => {
             </ListItem>
           </>
         )}
+        
+        {(user?.rol === 'gh' || user?.rol === 'lider' || user?.rol === 'conta') && (
+          <ListItem disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton
+              onClick={() => navigate('/reportes')}
+              sx={{
+                borderRadius: 1,
+                py: 1.2,
+                bgcolor: location.pathname === '/reportes' ? 'secondary.main' : 'transparent',
+                color: location.pathname === '/reportes' ? '#fff' : 'text.primary',
+                '&:hover': {
+                  bgcolor: location.pathname === '/reportes' ? 'secondary.dark' : 'action.hover',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                <Assessment />
+              </ListItemIcon>
+              <ListItemText
+                primary="Reportes"
+                primaryTypographyProps={{
+                  fontWeight: location.pathname === '/reportes' ? 600 : 400,
+                  fontSize: '0.9rem',
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        )}
+        
+        {user?.rol === 'gh' && (
+          <ListItem disablePadding sx={{ mb: 0.5 }}>
+            <ListItemButton
+              onClick={() => navigate('/configuracion')}
+              sx={{
+                borderRadius: 1,
+                py: 1.2,
+                bgcolor: location.pathname === '/configuracion' ? 'secondary.main' : 'transparent',
+                color: location.pathname === '/configuracion' ? '#fff' : 'text.primary',
+                '&:hover': {
+                  bgcolor: location.pathname === '/configuracion' ? 'secondary.dark' : 'action.hover',
+                },
+              }}
+            >
+              <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                <Settings />
+              </ListItemIcon>
+              <ListItemText
+                primary="Configuración"
+                primaryTypographyProps={{
+                  fontWeight: location.pathname === '/configuracion' ? 600 : 400,
+                  fontSize: '0.9rem',
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        )}
       </List>
       <Divider />
       <Box sx={{ p: 2 }}>
@@ -303,6 +361,8 @@ export const AppLayout = () => {
             {location.pathname === '/usuarios' && (user?.rol === 'lider' || user?.rol === 'conta' ? 'Colaboradores' : 'Usuarios')}
             {location.pathname === '/reemplazos' && 'Reemplazos'}
             {location.pathname === '/conciliaciones' && 'Conciliaciones'}
+            {location.pathname === '/reportes' && 'Reportes'}
+            {location.pathname === '/configuracion' && 'Configuración'}
           </Typography>
           
           <Tooltip title={`Cambiar a modo ${mode === 'light' ? 'oscuro' : 'claro'}`}>
