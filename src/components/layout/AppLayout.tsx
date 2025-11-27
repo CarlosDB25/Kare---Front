@@ -58,12 +58,10 @@ export const AppLayout = () => {
   const { data: unreadCount = 0 } = useQuery({
     queryKey: ['notificaciones', 'unread-count', user?.id],
     queryFn: () => notificacionService.getUnreadCount(),
-    refetchInterval: 10000, // Refrescar cada 10 segundos (antes 30s)
-    refetchOnWindowFocus: true, // Actualizar cuando vuelve al tab
+    refetchInterval: 10000,
+    refetchOnWindowFocus: true,
     enabled: !!user?.id,
   });
-
-  console.log('🔔 AppLayout - Contador de notificaciones:', unreadCount);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

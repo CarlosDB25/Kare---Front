@@ -13,13 +13,6 @@ export const apiClient = axios.create({
 // Interceptor: Agregar token JWT automáticamente
 apiClient.interceptors.request.use(
   (config) => {
-    console.log('[API Client] Request:', {
-      url: config.url,
-      baseURL: config.baseURL,
-      fullURL: `${config.baseURL}${config.url}`,
-      method: config.method,
-      data: config.data,
-    });
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -27,7 +20,6 @@ apiClient.interceptors.request.use(
     return config;
   },
   (error) => {
-    console.error('[API Client] Request error:', error);
     return Promise.reject(error);
   }
 );
@@ -35,10 +27,6 @@ apiClient.interceptors.request.use(
 // Interceptor: Manejar respuestas y errores
 apiClient.interceptors.response.use(
   (response) => {
-    console.log('[API Client] Response:', {
-      status: response.status,
-      data: response.data,
-    });
     return response;
   },
   (error) => {

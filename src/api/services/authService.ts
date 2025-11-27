@@ -11,12 +11,8 @@ import { AxiosError } from 'axios';
 class AuthService {
   // POST /auth/login
   async login(credentials: LoginCredentials): Promise<LoginResponse> {
-    console.log('[AUTH] Intentando login con:', credentials.email);
-    console.log('[AUTH] Endpoint:', API_ENDPOINTS.AUTH.LOGIN);
     try {
       const response = await apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials);
-      console.log('[AUTH] Respuesta completa:', response);
-      console.log('[AUTH] Data:', response.data);
       return response.data.data;
     } catch (error) {
       console.error('[AUTH] Error en login:', error);

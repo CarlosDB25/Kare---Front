@@ -11,19 +11,15 @@ export const useLogin = () => {
 
   return useMutation({
     mutationFn: (credentials: LoginCredentials) => {
-      console.log('[useLogin] Iniciando mutación con:', credentials);
       return authService.login(credentials);
     },
     onSuccess: (data) => {
-      console.log('[useLogin] Login exitoso, data:', data);
       const { token, usuario } = data;
       setAuth(usuario, token);
       toast.success(`¡Bienvenido ${usuario.nombre}!`);
       navigate('/dashboard');
     },
     onError: (error: any) => {
-      console.error('[useLogin] Error completo:', error);
-      console.error('[useLogin] Error response:', error.response);
       
       let message = 'Error al iniciar sesión';
       

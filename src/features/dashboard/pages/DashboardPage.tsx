@@ -182,44 +182,19 @@ export const DashboardPage = () => {
 
   // Datos para gráficas de Líder - Reemplazos por colaborador
   const reemplazosData = useMemo(() => {
-    console.log('📊 DASHBOARD - Calculando reemplazos data:', {
-      rol: user?.rol,
-      area: user?.area,
-      totalReemplazos: todosReemplazos.length,
-      totalUsuarios: usuarios.length,
-      totalIncapacidades: incapacidades.length
-    });
-    
     if (user?.rol !== 'lider' || todosReemplazos.length === 0) return [];
     
-    // Si no hay usuarios o incapacidades, mostrar todos los reemplazos sin filtrar
-    // (cuando carguen, se actualizará automáticamente)
     let reemplazosParaMostrar = todosReemplazos;
     
     // Solo filtrar si tenemos todos los datos necesarios
     if (usuarios.length > 0 && incapacidades.length > 0 && user.area) {
       reemplazosParaMostrar = todosReemplazos.filter(reemplazo => {
         const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
-        if (!incapacidad) {
-          console.log('⚠️ No se encontró incapacidad para reemplazo:', reemplazo.id);
-          // Si no encontramos la incapacidad, incluir el reemplazo de todas formas
-          return true;
-        }
+        if (!incapacidad) return true;
         const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
-        const coincide = colaborador && colaborador.area === user.area;
-        console.log('🔍 Verificando reemplazo:', {
-          reemplazoId: reemplazo.id,
-          incapacidadId: incapacidad.id,
-          colaborador: colaborador?.nombre,
-          areaColaborador: colaborador?.area,
-          areaLider: user.area,
-          coincide
-        });
-        return coincide;
+        return colaborador && colaborador.area === user.area;
       });
     }
-    
-    console.log('✅ Reemplazos filtrados:', reemplazosParaMostrar.length);
     
     const colaboradoresConReemplazo = reemplazosParaMostrar.reduce((acc: any, reemplazo) => {
       const nombre = reemplazo.nombre_ausente;
@@ -663,39 +638,18 @@ export const DashboardPage = () => {
               const reemplazosActivos = todosReemplazos.filter(r => {
                 if (r.estado !== 'activo') return false;
                 
-                console.log('🔢 CARD - Verificando reemplazo activo:', {
-                  reemplazoId: r.id,
-                  estado: r.estado,
-                  incapacidadId: r.incapacidad_id,
-                  hayIncapacidades: incapacidades.length > 0,
-                  hayUsuarios: usuarios.length > 0
-                });
-                
                 // Si no hay datos suficientes, contar todos los activos
                 if (incapacidades.length === 0 || usuarios.length === 0) {
-                  console.log('⚠️ CARD - Sin datos suficientes, incluyendo reemplazo');
                   return true;
                 }
                 
                 // Filtrar solo reemplazos donde el colaborador reemplazado es del área del líder
                 const incapacidad = incapacidades.find(i => i.id === r.incapacidad_id);
-                if (!incapacidad) {
-                  console.log('⚠️ CARD - No se encontró incapacidad, incluyendo reemplazo');
-                  return true; // Incluir si no encontramos la incapacidad
-                }
+                if (!incapacidad) return true;
                 
                 const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
-                const coincide = !colaborador || colaborador.area === user.area;
-                console.log('🔍 CARD - Resultado:', {
-                  colaborador: colaborador?.nombre,
-                  areaColaborador: colaborador?.area,
-                  areaLider: user.area,
-                  coincide
-                });
-                return coincide;
+                return !colaborador || colaborador.area === user.area;
               });
-              
-              console.log('✅ CARD - Total reemplazos activos del área:', reemplazosActivos.length);
               
               return (
                 <StatsCard

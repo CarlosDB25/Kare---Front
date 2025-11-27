@@ -37,23 +37,14 @@ export const NotificacionesPage = () => {
   const { user } = useAuthStore();
 
   const { data: notificaciones = [], isLoading, error } = useQuery({
-    queryKey: ['notificaciones', user?.id], // Incluir user.id para evitar cache compartido
+    queryKey: ['notificaciones', user?.id],
     queryFn: async () => {
       const result = await notificacionService.getAll();
-      console.log('📬 Respuesta del servidor:', result);
-      console.log('📬 Primera notificación:', result[0]);
       return result;
     },
     enabled: !!user?.id,
-    refetchInterval: 10000, // Actualizar cada 10 segundos
-    refetchOnWindowFocus: true, // Actualizar cuando vuelve al tab
-  });
-
-  console.log('📬 Notificaciones cargadas:', {
-    count: notificaciones.length,
-    notificaciones: notificaciones,
-    primeraNot: notificaciones[0],
-    error
+    refetchInterval: 10000,
+    refetchOnWindowFocus: true,
   });
 
   const markAsReadMutation = useMutation({
