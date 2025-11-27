@@ -489,13 +489,20 @@ const CreateReemplazoDialog = ({ open, onClose }: CreateDialogProps) => {
   );
 
   // Filtrar colaboradores activos que NO están reemplazando actualmente
-  // y excluyendo al que tiene la incapacidad seleccionada
+  // y que NO tienen una incapacidad activa
   const colaboradoresDisponibles = usuarios.filter((u) => {
     if (u.rol !== 'colaborador') return false;
     if (u.id === selectedIncapacidad?.usuario_id) return false;
+    
     // Verificar que no esté reemplazando activamente
     const estaReemplazando = reemplazosActivos.some(r => r.colaborador_reemplazo_id === u.id);
-    return !estaReemplazando;
+    if (estaReemplazando) return false;
+    
+    // Verificar que no tenga una incapacidad activa
+    const tieneIncapacidadActiva = incapacidades.some(inc => inc.usuario_id === u.id);
+    if (tieneIncapacidadActiva) return false;
+    
+    return true;
   });
 
   return (
