@@ -182,11 +182,13 @@ export const DashboardPage = () => {
 
   // Datos para gráficas de Líder - Reemplazos por colaborador
   const reemplazosData = useMemo(() => {
-    if (user?.rol !== 'lider' || todosReemplazos.length === 0 || usuarios.length === 0) return [];
+    if (user?.rol !== 'lider' || todosReemplazos.length === 0 || usuarios.length === 0 || incapacidades.length === 0) return [];
     
     // Filtrar solo reemplazos del área del líder
     const reemplazosDelArea = todosReemplazos.filter(reemplazo => {
-      const colaborador = usuarios.find(u => u.id === reemplazo.colaborador_id);
+      const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
+      if (!incapacidad) return false;
+      const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
       return colaborador && colaborador.area === user.area;
     });
     
@@ -201,7 +203,7 @@ export const DashboardPage = () => {
     }, {});
     
     return Object.values(colaboradoresConReemplazo).slice(0, 5); // Top 5
-  }, [todosReemplazos, user, usuarios]);
+  }, [todosReemplazos, user, usuarios, incapacidades]);
 
   // Datos para gráficas de CONTA - Distribución de costos
   const costosData = useMemo(() => {
@@ -634,7 +636,9 @@ export const DashboardPage = () => {
                 value={todosReemplazos.filter(r => {
                   if (r.estado !== 'activo') return false;
                   // Filtrar solo reemplazos donde el colaborador reemplazado es del área del líder
-                  const colaborador = usuarios.find(u => u.id === r.colaborador_id);
+                  const incapacidad = incapacidades.find(i => i.id === r.incapacidad_id);
+                  if (!incapacidad) return false;
+                  const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
                   return colaborador && colaborador.area === user.area;
                 }).length}
                 icon={<PersonAdd sx={{ fontSize: 28, color: '#fff' }} />}
