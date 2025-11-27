@@ -182,15 +182,19 @@ export const DashboardPage = () => {
 
   // Datos para gráficas de Líder - Reemplazos por colaborador
   const reemplazosData = useMemo(() => {
-    if (user?.rol !== 'lider' || todosReemplazos.length === 0 || usuarios.length === 0 || incapacidades.length === 0) return [];
+    if (user?.rol !== 'lider' || todosReemplazos.length === 0) return [];
     
-    // Filtrar solo reemplazos del área del líder
-    const reemplazosDelArea = todosReemplazos.filter(reemplazo => {
-      const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
-      if (!incapacidad) return false;
-      const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
-      return colaborador && colaborador.area === user.area;
-    });
+    // Filtrar solo reemplazos del área del líder si hay datos de incapacidades y usuarios
+    let reemplazosDelArea = todosReemplazos;
+    
+    if (usuarios.length > 0 && incapacidades.length > 0) {
+      reemplazosDelArea = todosReemplazos.filter(reemplazo => {
+        const incapacidad = incapacidades.find(i => i.id === reemplazo.incapacidad_id);
+        if (!incapacidad) return false;
+        const colaborador = usuarios.find(u => u.id === incapacidad.usuario_id);
+        return colaborador && colaborador.area === user.area;
+      });
+    }
     
     const colaboradoresConReemplazo = reemplazosDelArea.reduce((acc: any, reemplazo) => {
       const nombre = reemplazo.nombre_ausente;

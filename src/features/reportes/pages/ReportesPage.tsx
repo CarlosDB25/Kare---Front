@@ -66,8 +66,8 @@ export const ReportesPage = () => {
     if (inicio && fechaIncap < inicio) cumpleFecha = false;
     if (fin && fechaIncap > fin) cumpleFecha = false;
 
-    // Filtrar por área para líderes cuando selecciona "equipo"
-    if (user?.rol === 'lider' && tipoReporte === 'equipo' && user?.area) {
+    // Filtrar por área para líderes (siempre, no solo cuando tipoReporte === 'equipo')
+    if (user?.rol === 'lider' && user?.area && usuarios.length > 0) {
       const colaborador = usuarios.find(u => u.id === incap.usuario_id);
       if (!colaborador || colaborador.area !== user.area) {
         return false;
