@@ -95,6 +95,8 @@ export const ReportesPage = () => {
     validadas: datosFiltrados.filter(i => i.estado === 'validada').length,
     rechazadas: datosFiltrados.filter(i => i.estado === 'rechazada').length,
     pagadas: datosFiltrados.filter(i => i.estado === 'pagada').length,
+    conciliadas: datosFiltrados.filter(i => i.estado === 'conciliada').length,
+    archivadas: datosFiltrados.filter(i => i.estado === 'archivada').length,
     eps: datosFiltrados.filter(i => i.tipo === 'EPS').length,
     arl: datosFiltrados.filter(i => i.tipo === 'ARL').length,
   }), [datosFiltrados]);
@@ -105,6 +107,8 @@ export const ReportesPage = () => {
     { name: 'Validadas', value: stats.validadas, color: '#4caf50' },
     { name: 'Rechazadas', value: stats.rechazadas, color: '#f44336' },
     { name: 'Pagadas', value: stats.pagadas, color: '#9c27b0' },
+    { name: 'Conciliadas', value: stats.conciliadas, color: '#00bcd4' },
+    { name: 'Archivadas', value: stats.archivadas, color: '#607d8b' },
   ].filter(d => d.value > 0), [stats]);
 
   const tipoData = useMemo(() => [
