@@ -46,7 +46,6 @@ export const ReportesPage = () => {
   const { data: usuarios = [] } = useQuery({
     queryKey: ['usuarios'],
     queryFn: usuarioService.getAll,
-    enabled: user?.rol === 'lider',
   });
 
   // Obtener nombre de la empresa del localStorage o usar default
@@ -217,16 +216,16 @@ export const ReportesPage = () => {
       </Card>
 
       {/* Reporte para imprimir */}
-      <Paper ref={reportRef} sx={{ p: 4, bgcolor: 'white' }}>
+      <Paper ref={reportRef} sx={{ p: 4, bgcolor: 'white', color: '#000' }}>
         {/* Encabezado */}
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography variant="h4" fontWeight={700} color="primary" gutterBottom>
+          <Typography variant="h4" fontWeight={700} sx={{ color: '#1976d2' }} gutterBottom>
             {nombreEmpresa}
           </Typography>
-          <Typography variant="h5" fontWeight={600} gutterBottom>
+          <Typography variant="h5" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
             Reporte de {tipoReporte === 'general' ? 'Incapacidades' : tipoReporte === 'financiero' ? 'Análisis Financiero' : 'Mi Equipo'}
           </Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" sx={{ color: '#666' }}>
             Generado el {new Date().toLocaleDateString('es-CO', { 
               year: 'numeric', 
               month: 'long', 
@@ -234,12 +233,12 @@ export const ReportesPage = () => {
             })}
           </Typography>
           {user?.rol === 'lider' && user?.area && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: '#666' }}>
               Área: {user.area}
             </Typography>
           )}
           {fechaInicio && fechaFin && (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" sx={{ color: '#666' }}>
               Período: {new Date(fechaInicio).toLocaleDateString()} - {new Date(fechaFin).toLocaleDateString()}
             </Typography>
           )}
@@ -251,40 +250,40 @@ export const ReportesPage = () => {
         {(tipoReporte === 'general' || tipoReporte === 'equipo') && (
           <>
             {/* Estadísticas Generales */}
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+            <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
               Resumen Ejecutivo
             </Typography>
             <Grid container spacing={2} sx={{ mb: 4 }}>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f5f5f5' }}>
-                  <Typography variant="h4" fontWeight={700} color="primary">
+                  <Typography variant="h4" fontWeight={700} sx={{ color: '#1976d2' }}>
                     {stats.total}
                   </Typography>
-                  <Typography variant="body2">Total Incapacidades</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Total Incapacidades</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f5f5f5' }}>
-                  <Typography variant="h4" fontWeight={700} color="success.main">
+                  <Typography variant="h4" fontWeight={700} sx={{ color: '#4caf50' }}>
                     {stats.validadas}
                   </Typography>
-                  <Typography variant="body2">Validadas</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Validadas</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f5f5f5' }}>
-                  <Typography variant="h4" fontWeight={700} color="warning.main">
+                  <Typography variant="h4" fontWeight={700} sx={{ color: '#ff9800' }}>
                     {stats.en_revision}
                   </Typography>
-                  <Typography variant="body2">En Revisión</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>En Revisión</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f5f5f5' }}>
-                  <Typography variant="h4" fontWeight={700} color="error.main">
+                  <Typography variant="h4" fontWeight={700} sx={{ color: '#f44336' }}>
                     {stats.rechazadas}
                   </Typography>
-                  <Typography variant="body2">Rechazadas</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Rechazadas</Typography>
                 </Paper>
               </Grid>
             </Grid>
@@ -292,39 +291,39 @@ export const ReportesPage = () => {
             {/* Gráficas */}
             <Grid container spacing={3} sx={{ mb: 4 }}>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
+                <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
                   Distribución por Estado
                 </Typography>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
                       data={pieData}
                       cx="50%"
                       cy="50%"
-                      labelLine={false}
-                      label={(entry) => `${entry.name}: ${entry.value}`}
-                      outerRadius={80}
+                      labelLine={true}
+                      label={(entry) => entry.name}
+                      outerRadius={90}
                       dataKey="value"
                     >
                       {pieData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
-                    <Legend />
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', color: '#000' }} />
+                    <Legend wrapperStyle={{ color: '#000' }} />
                   </PieChart>
                 </ResponsiveContainer>
               </Grid>
               <Grid size={{ xs: 12, md: 6 }}>
-                <Typography variant="h6" fontWeight={600} gutterBottom>
+                <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
                   Incapacidades por Tipo
                 </Typography>
-                <ResponsiveContainer width="100%" height={250}>
+                <ResponsiveContainer width="100%" height={300}>
                   <BarChart data={tipoData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="tipo" />
-                    <YAxis />
-                    <Tooltip />
+                    <XAxis dataKey="tipo" tick={{ fill: '#000' }} />
+                    <YAxis tick={{ fill: '#000' }} />
+                    <Tooltip contentStyle={{ backgroundColor: '#fff', border: '1px solid #ccc', color: '#000' }} />
                     <Bar dataKey="cantidad">
                       {tipoData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
@@ -340,45 +339,45 @@ export const ReportesPage = () => {
         {/* Reporte Financiero (CONTA) */}
         {tipoReporte === 'financiero' && user?.rol === 'conta' && statsConta && (
           <>
-            <Typography variant="h6" fontWeight={600} gutterBottom>
+            <Typography variant="h6" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
               Análisis Financiero
             </Typography>
             <Grid container spacing={2} sx={{ mb: 4 }}>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#f3e5f5' }}>
-                  <Typography variant="h5" fontWeight={700} color="primary">
+                  <Typography variant="h5" fontWeight={700} sx={{ color: '#1976d2' }}>
                     {formatCurrency(statsConta.totalConciliado)}
                   </Typography>
-                  <Typography variant="body2">Total Conciliado</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Total Conciliado</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#fff3e0' }}>
-                  <Typography variant="h5" fontWeight={700} color="warning.main">
+                  <Typography variant="h5" fontWeight={700} sx={{ color: '#ff9800' }}>
                     {formatCurrency(statsConta.totalEmpresa)}
                   </Typography>
-                  <Typography variant="body2">Pagado Empresa</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Pagado Empresa</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#e3f2fd' }}>
-                  <Typography variant="h5" fontWeight={700} color="info.main">
+                  <Typography variant="h5" fontWeight={700} sx={{ color: '#0288d1' }}>
                     {formatCurrency(statsConta.totalEPS)}
                   </Typography>
-                  <Typography variant="body2">Pagado EPS</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Pagado EPS</Typography>
                 </Paper>
               </Grid>
               <Grid size={{ xs: 6, md: 3 }}>
                 <Paper sx={{ p: 2, textAlign: 'center', bgcolor: '#ffebee' }}>
-                  <Typography variant="h5" fontWeight={700} color="error.main">
+                  <Typography variant="h5" fontWeight={700} sx={{ color: '#f44336' }}>
                     {formatCurrency(statsConta.totalARL)}
                   </Typography>
-                  <Typography variant="body2">Pagado ARL</Typography>
+                  <Typography variant="body2" sx={{ color: '#000' }}>Pagado ARL</Typography>
                 </Paper>
               </Grid>
             </Grid>
 
-            <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+            <Typography variant="body2" sx={{ color: '#666', mt: 2 }}>
               Total de conciliaciones procesadas: {conciliaciones.length}
             </Typography>
           </>
@@ -387,11 +386,11 @@ export const ReportesPage = () => {
         {/* Pie de página */}
         <Divider sx={{ my: 3 }} />
         <Box sx={{ textAlign: 'center' }}>
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: '#666' }}>
             Este reporte fue generado automáticamente por {nombreEmpresa}
           </Typography>
           <br />
-          <Typography variant="caption" color="text.secondary">
+          <Typography variant="caption" sx={{ color: '#666' }}>
             Usuario: {user?.nombre} ({user?.rol?.toUpperCase()})
           </Typography>
         </Box>
