@@ -16,6 +16,21 @@ export const ConfiguracionPage = () => {
   const [nombreEmpresa, setNombreEmpresa] = useState(() => {
     return localStorage.getItem('nombreEmpresa') || '';
   });
+  const [nit, setNit] = useState(() => {
+    return localStorage.getItem('empresaNit') || '';
+  });
+  const [direccion, setDireccion] = useState(() => {
+    return localStorage.getItem('empresaDireccion') || '';
+  });
+  const [telefono, setTelefono] = useState(() => {
+    return localStorage.getItem('empresaTelefono') || '';
+  });
+  const [email, setEmail] = useState(() => {
+    return localStorage.getItem('empresaEmail') || '';
+  });
+  const [representanteLegal, setRepresentanteLegal] = useState(() => {
+    return localStorage.getItem('empresaRepresentante') || '';
+  });
   const [guardado, setGuardado] = useState(false);
 
   const handleGuardar = () => {
@@ -25,6 +40,11 @@ export const ConfiguracionPage = () => {
     }
 
     localStorage.setItem('nombreEmpresa', nombreEmpresa);
+    localStorage.setItem('empresaNit', nit);
+    localStorage.setItem('empresaDireccion', direccion);
+    localStorage.setItem('empresaTelefono', telefono);
+    localStorage.setItem('empresaEmail', email);
+    localStorage.setItem('empresaRepresentante', representanteLegal);
     setGuardado(true);
     toast.success('Configuración guardada exitosamente');
     
@@ -70,6 +90,63 @@ export const ConfiguracionPage = () => {
               }}
               placeholder="Ej: Mi Empresa S.A.S."
               helperText="Este nombre se mostrará en todos los reportes"
+            />
+
+            <TextField
+              label="NIT"
+              fullWidth
+              value={nit}
+              onChange={(e) => {
+                setNit(e.target.value);
+                setGuardado(false);
+              }}
+              placeholder="Ej: 900.123.456-7"
+              helperText="Número de Identificación Tributaria"
+            />
+
+            <TextField
+              label="Dirección"
+              fullWidth
+              value={direccion}
+              onChange={(e) => {
+                setDireccion(e.target.value);
+                setGuardado(false);
+              }}
+              placeholder="Ej: Calle 123 #45-67"
+            />
+
+            <TextField
+              label="Teléfono"
+              fullWidth
+              value={telefono}
+              onChange={(e) => {
+                setTelefono(e.target.value);
+                setGuardado(false);
+              }}
+              placeholder="Ej: +57 300 123 4567"
+            />
+
+            <TextField
+              label="Email Corporativo"
+              fullWidth
+              type="email"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setGuardado(false);
+              }}
+              placeholder="Ej: contacto@empresa.com"
+            />
+
+            <TextField
+              label="Representante Legal"
+              fullWidth
+              value={representanteLegal}
+              onChange={(e) => {
+                setRepresentanteLegal(e.target.value);
+                setGuardado(false);
+              }}
+              placeholder="Ej: Juan Pérez"
             />
 
             <Button

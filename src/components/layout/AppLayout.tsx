@@ -33,6 +33,7 @@ import {
   AccountBalance,
   Assessment,
   Settings,
+  Payment,
 } from '@mui/icons-material';
 import { useAuthStore } from '../../store/authStore';
 import { useThemeStore } from '../../store/themeStore';
@@ -253,6 +254,31 @@ export const AppLayout = () => {
                   primary="Conciliaciones"
                   primaryTypographyProps={{
                     fontWeight: location.pathname === '/conciliaciones' ? 600 : 400,
+                    fontSize: '0.9rem',
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+            <ListItem disablePadding sx={{ mb: 0.5 }}>
+              <ListItemButton
+                onClick={() => navigate('/pagos')}
+                sx={{
+                  borderRadius: 1,
+                  py: 1.2,
+                  bgcolor: location.pathname === '/pagos' ? 'secondary.main' : 'transparent',
+                  color: location.pathname === '/pagos' ? '#fff' : 'text.primary',
+                  '&:hover': {
+                    bgcolor: location.pathname === '/pagos' ? 'secondary.dark' : 'action.hover',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ color: 'inherit', minWidth: 36 }}>
+                  <Payment />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Pagos"
+                  primaryTypographyProps={{
+                    fontWeight: location.pathname === '/pagos' ? 600 : 400,
                     fontSize: '0.9rem',
                   }}
                 />

@@ -193,12 +193,14 @@ export const IncapacidadesPage = () => {
           return [];
       }
     } else if (user?.rol === 'conta') {
-      // CONTA maneja: validada -> pagada -> conciliada
+      // CONTA maneja: validada -> (crear conciliación primero) -> conciliada
+      // Ya no se usa el estado 'pagada', se va directo de validada a conciliada
       switch (estadoActual) {
         case 'validada':
-          return ['pagada'];
-        case 'pagada':
-          return ['conciliada'];
+          // Solo permitir cambio a conciliada si ya tiene conciliación
+          return []; // No permitir cambio manual, debe crear conciliación primero
+        case 'conciliada':
+          return []; // Ya está conciliada, no se puede cambiar
         default:
           return [];
       }

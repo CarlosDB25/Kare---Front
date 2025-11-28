@@ -30,6 +30,7 @@ import { Visibility, Calculate } from '@mui/icons-material';
 import { conciliacionService } from '../../../api/services/conciliacionService';
 import { incapacidadService } from '../../../api/services/incapacidadService';
 import { formatCurrency } from '../../../utils';
+import toast from 'react-hot-toast';
 import type { Conciliacion, CreateConciliacionData } from '../../../api/services/conciliacionService';
 import type { Incapacidad } from '../../incapacidades/types/incapacidad.types';
 
@@ -339,94 +340,185 @@ export default function ConciliacionesPage() {
         )}
       </Box>
 
-      {/* Dialog de detalles */}
+      {/* Dialog de detalles - Mejorado */}
       <Dialog
         open={detailDialogOpen}
         onClose={() => setDetailDialogOpen(false)}
         maxWidth="md"
         fullWidth
       >
-        <DialogTitle>Detalle de Conciliación #{selectedConciliacion?.id}</DialogTitle>
+        <DialogTitle sx={{ pb: 1 }}>
+          <Stack direction="row" alignItems="center" justifyContent="space-between">
+            <Typography variant="h6" fontWeight={700}>
+              Detalle de Conciliación #{selectedConciliacion?.id}
+            </Typography>
+            <Chip 
+              label={selectedConciliacion?.incapacidad_tipo} 
+              color={selectedConciliacion?.incapacidad_tipo === 'ARL' ? 'error' : 'primary'}
+              size="small"
+            />
+          </Stack>
+        </DialogTitle>
+        <Divider />
         <DialogContent>
           {selectedConciliacion && (
             <Box sx={{ pt: 2 }}>
-              <Stack spacing={2}>
-                <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-                  <Box>
-                    <Typography variant="body2" color="textSecondary">Colaborador</Typography>
-                    <Typography variant="body1">{selectedConciliacion.colaborador_nombre}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="textSecondary">Tipo Incapacidad</Typography>
-                    <Typography variant="body1">{selectedConciliacion.incapacidad_tipo}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="textSecondary">Días Incapacidad</Typography>
-                    <Typography variant="body1">{selectedConciliacion.dias_incapacidad}</Typography>
-                  </Box>
-                  <Box>
-                    <Typography variant="body2" color="textSecondary">Valor Día</Typography>
-                    <Typography variant="body1">{formatCurrency(selectedConciliacion.valor_dia)}</Typography>
-                  </Box>
+              {/* Información del Colaborador */}
+              <Card sx={{ mb: 3, bgcolor: 'background.default' }}>
+                <CardContent>
+                  <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                    INFORMACIÓN DEL COLABORADOR
+                  </Typography>
+                  <Typography variant="h6" fontWeight={600}>
+                    {selectedConciliacion.colaborador_nombre}
+                  </Typography>
+                  <Typography variant="caption" color="text.secondary">
+                    Fecha: {new Date(selectedConciliacion.created_at).toLocaleDateString('es-CO', { 
+                      year: 'numeric', 
+                      month: 'long', 
+                      day: 'numeric' 
+                    })}
+                  </Typography>
+                </CardContent>
+              </Card>
+
+              {/* Datos Base */}
+              <Stack spacing={2} sx={{ mb: 3 }}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  DATOS BASE DE CÁLCULO
+                </Typography>
+                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)' }, gap: 2 }}>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="caption" color="text.secondary">Salario Base</Typography>
+                      <Typography variant="h6" color="primary">{formatCurrency(selectedConciliacion.salario_base)}</Typography>
+                    </CardContent>
+                  </Card>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="caption" color="text.secondary">IBC</Typography>
+                      <Typography variant="h6" color="primary">{formatCurrency(selectedConciliacion.ibc)}</Typography>
+                    </CardContent>
+                  </Card>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="caption" color="text.secondary">Valor Día</Typography>
+                      <Typography variant="h6" color="primary">{formatCurrency(selectedConciliacion.valor_dia)}</Typography>
+                    </CardContent>
+                  </Card>
+                  <Card variant="outlined">
+                    <CardContent>
+                      <Typography variant="caption" color="text.secondary">Días Incapacidad</Typography>
+                      <Typography variant="h6" color="primary">{selectedConciliacion.dias_incapacidad}</Typography>
+                    </CardContent>
+                  </Card>
                 </Box>
               </Stack>
 
-              <Divider sx={{ my: 2 }} />
+              <Divider sx={{ my: 3 }} />
 
-              <Typography variant="h6" gutterBottom>Desglose de Pago</Typography>
+              {/* Desglose de Pago */}
+              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                DESGLOSE DE RESPONSABILIDADES
+              </Typography>
 
-              {selectedConciliacion.dias_empresa_67 > 0 && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography variant="body2" color="textSecondary">
-                    Empleador (66.67%) - {selectedConciliacion.dias_empresa_67} días
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {formatCurrency(selectedConciliacion.monto_empresa_67)}
-                  </Typography>
-                </Box>
-              )}
+              <Stack spacing={2} sx={{ my: 2 }}>
+                {selectedConciliacion.dias_empresa_67 > 0 && (
+                  <Card sx={{ bgcolor: 'warning.light', borderLeft: '4px solid', borderColor: 'warning.main' }}>
+                    <CardContent>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Typography variant="body2" fontWeight={600}>Empleador (66.67%)</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {selectedConciliacion.dias_empresa_67} días
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" fontWeight={700} color="warning.dark">
+                          {formatCurrency(selectedConciliacion.monto_empresa_67)}
+                        </Typography>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
 
-              {selectedConciliacion.dias_eps_100 > 0 && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography variant="body2" color="textSecondary">
-                    EPS - {selectedConciliacion.dias_eps_100} días
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {formatCurrency(selectedConciliacion.monto_eps_100)}
-                  </Typography>
-                </Box>
-              )}
+                {selectedConciliacion.dias_eps_100 > 0 && (
+                  <Card sx={{ bgcolor: 'info.light', borderLeft: '4px solid', borderColor: 'info.main' }}>
+                    <CardContent>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Typography variant="body2" fontWeight={600}>EPS (100%)</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {selectedConciliacion.dias_eps_100} días
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" fontWeight={700} color="info.dark">
+                          {formatCurrency(selectedConciliacion.monto_eps_100)}
+                        </Typography>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
 
-              {selectedConciliacion.dias_arl_100 > 0 && (
-                <Box sx={{ mb: 1 }}>
-                  <Typography variant="body2" color="textSecondary">
-                    ARL (100%) - {selectedConciliacion.dias_arl_100} días
-                  </Typography>
-                  <Typography variant="body1" sx={{ fontWeight: 600 }}>
-                    {formatCurrency(selectedConciliacion.monto_arl_100)}
-                  </Typography>
-                </Box>
-              )}
+                {selectedConciliacion.dias_arl_100 > 0 && (
+                  <Card sx={{ bgcolor: 'error.light', borderLeft: '4px solid', borderColor: 'error.main' }}>
+                    <CardContent>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Box>
+                          <Typography variant="body2" fontWeight={600}>ARL (100%)</Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            {selectedConciliacion.dias_arl_100} días
+                          </Typography>
+                        </Box>
+                        <Typography variant="h6" fontWeight={700} color="error.dark">
+                          {formatCurrency(selectedConciliacion.monto_arl_100)}
+                        </Typography>
+                      </Stack>
+                    </CardContent>
+                  </Card>
+                )}
+              </Stack>
 
-              <Divider sx={{ my: 2 }} />
+              <Divider sx={{ my: 3 }} />
 
-              <Box sx={{ bgcolor: 'success.light', p: 2, borderRadius: 1 }}>
-                <Typography variant="h6" color="success.dark">
-                  Total a Pagar: {formatCurrency(selectedConciliacion.total_a_pagar)}
-                </Typography>
-              </Box>
+              {/* Total */}
+              <Card sx={{ bgcolor: 'success.main', color: 'white' }}>
+                <CardContent>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography variant="h6" fontWeight={600}>
+                      Total a Pagar al Colaborador
+                    </Typography>
+                    <Typography variant="h4" fontWeight={700}>
+                      {formatCurrency(selectedConciliacion.total_a_pagar)}
+                    </Typography>
+                  </Stack>
+                </CardContent>
+              </Card>
 
               {selectedConciliacion.observaciones && (
-                <Box sx={{ mt: 2 }}>
-                  <Typography variant="body2" color="textSecondary">Observaciones</Typography>
-                  <Typography variant="body1">{selectedConciliacion.observaciones}</Typography>
+                <Box sx={{ mt: 3 }}>
+                  <Alert severity="info">
+                    <Typography variant="caption" fontWeight={600}>Observaciones:</Typography>
+                    <Typography variant="body2">{selectedConciliacion.observaciones}</Typography>
+                  </Alert>
                 </Box>
               )}
             </Box>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDetailDialogOpen(false)}>Cerrar</Button>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button onClick={() => setDetailDialogOpen(false)} size="large">
+            Cerrar
+          </Button>
+          <Button 
+            variant="contained" 
+            size="large"
+            onClick={() => {
+              // TODO: Integrar con módulo de pagos
+              toast.success('Módulo de pagos próximamente disponible');
+            }}
+          >
+            Procesar Pago
+          </Button>
         </DialogActions>
       </Dialog>
 

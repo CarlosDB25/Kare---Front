@@ -11,6 +11,7 @@ import { ReemplazosPage } from '../features/reemplazos/pages/ReemplazosPage';
 import ConciliacionesPage from '../features/conciliaciones/pages/ConciliacionesPage';
 import { ReportesPage } from '../features/reportes/pages/ReportesPage';
 import { ConfiguracionPage } from '../features/configuracion/pages/ConfiguracionPage';
+import { PagosPage } from '../features/pagos/pages/PagosPage';
 
 const UnauthorizedPage = () => <div>No autorizado</div>;
 
@@ -49,6 +50,15 @@ export const AppRoutes = () => {
             element={
               <ProtectedRoute allowedRoles={['conta']}>
                 <ConciliacionesPage />
+              </ProtectedRoute>
+            }
+          />
+          
+          <Route
+            path="pagos"
+            element={
+              <ProtectedRoute allowedRoles={['conta', 'gh']}>
+                <PagosPage />
               </ProtectedRoute>
             }
           />
