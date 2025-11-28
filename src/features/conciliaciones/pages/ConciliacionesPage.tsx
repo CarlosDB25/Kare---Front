@@ -3,6 +3,7 @@
 
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -30,12 +31,12 @@ import { Visibility, Calculate } from '@mui/icons-material';
 import { conciliacionService } from '../../../api/services/conciliacionService';
 import { incapacidadService } from '../../../api/services/incapacidadService';
 import { formatCurrency } from '../../../utils';
-import toast from 'react-hot-toast';
 import type { Conciliacion, CreateConciliacionData } from '../../../api/services/conciliacionService';
 import type { Incapacidad } from '../../incapacidades/types/incapacidad.types';
 
 export default function ConciliacionesPage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
   const [selectedConciliacion, setSelectedConciliacion] = useState<Conciliacion | null>(null);
   const [calcDialogOpen, setCalcDialogOpen] = useState(false);
@@ -509,16 +510,23 @@ export default function ConciliacionesPage() {
           <Button onClick={() => setDetailDialogOpen(false)} size="large">
             Cerrar
           </Button>
-          <Button 
-            variant="contained" 
-            size="large"
-            onClick={() => {
-              // TODO: Integrar con módulo de pagos
-              toast.success('Módulo de pagos próximamente disponible');
-            }}
-          >
-            Procesar Pago
-          </Button>
+          {selectedConciliacion && selectedConciliacion.monto_empresa_67 > 0 && (
+            <Button 
+              variant="contained" 
+              size="large"
+              onClick={() => {
+                navigate('/pagos', {
+                  state: {
+                    monto: selectedConciliacion.monto_empresa_67,
+                    beneficiario: selectedConciliacion.colaborador_nombre,
+                    concepto: `Pago incapacidad - ${selectedConciliacion.dias_incapacidad} días`
+                  }
+                });
+              }}
+            >
+              Procesar Pago
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
 

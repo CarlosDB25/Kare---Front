@@ -35,6 +35,12 @@ class UsuarioService {
     const response = await apiClient.put(`/usuarios/${id}/completar-datos`, datos);
     return response.data.data;
   }
+
+  // GET /usuarios?rol=gh - Obtener usuarios por rol
+  async getByRole(rol: string): Promise<Usuario[]> {
+    const response = await apiClient.get(`/usuarios?rol=${rol}`);
+    return response.data.data;
+  }
 }
 
 export const usuarioService = new UsuarioService();

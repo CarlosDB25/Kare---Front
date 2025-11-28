@@ -14,6 +14,14 @@ export interface Notificacion {
   incapacidad_estado?: string;
 }
 
+export interface CreateNotificacionData {
+  usuario_id: number;
+  tipo: string;
+  titulo: string;
+  mensaje: string;
+  incapacidad_id?: number;
+}
+
 class NotificacionService {
   // GET /notificaciones - Ver mis notificaciones
   async getAll(): Promise<Notificacion[]> {
@@ -41,6 +49,12 @@ class NotificacionService {
   // DELETE /notificaciones/:id - Eliminar
   async delete(id: number): Promise<void> {
     await apiClient.delete(`${API_ENDPOINTS.NOTIFICACIONES.BASE}/${id}`);
+  }
+
+  // POST /notificaciones - Crear notificación manual
+  async create(data: CreateNotificacionData): Promise<Notificacion> {
+    const response = await apiClient.post(API_ENDPOINTS.NOTIFICACIONES.BASE, data);
+    return response.data.data;
   }
 }
 
