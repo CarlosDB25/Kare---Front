@@ -20,11 +20,14 @@ import {
   ArrowBack,
 } from '@mui/icons-material';
 import toast from 'react-hot-toast';
+import { incapacidadService } from '../../../api/services/incapacidadService';
+import { useMutation } from '@tanstack/react-query';
 
 interface PagoData {
   monto?: number;
   beneficiario?: string;
   concepto?: string;
+  incapacidad_id?: string;
 }
 
 export const PagosPage = () => {
@@ -41,6 +44,20 @@ export const PagosPage = () => {
   const [titular, setTitular] = useState('');
   const [simulacionRealizada, setSimulacionRealizada] = useState(false);
   const [transactionId, setTransactionId] = useState('');
+
+  // Recuperar id de incapacidad si viene de conciliación
+  // Puede venir como string, pero updateEstado espera number
+  const incapacidadId = pagoData.incapacidad_id ? Number(pagoData.incapacidad_id) : undefined;
+
+  const updateEstadoMutation = useMutation({
+    mutationFn: async () => {
+      if (!incapacidadId) return;
+      await incapacidadService.updateEstado(incapacidadId, { estado: 'conciliada' });
+    },
+    onSuccess: () => {
+      toast.success('Estado actualizado a conciliada');
+    }
+  });
 
   useEffect(() => {
     if (pagoData.monto) {
@@ -62,6 +79,7 @@ export const PagosPage = () => {
       setSimulacionRealizada(true);
       toast.dismiss();
       toast.success('¡Pago simulado exitosamente!');
+      if (incapacidadId) updateEstadoMutation.mutate();
     }, 2000);
   };
 

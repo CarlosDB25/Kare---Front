@@ -1,7 +1,7 @@
 // src/features/conciliaciones/pages/ConciliacionesPage.tsx
 // Página de gestión de conciliaciones para CONTA
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -41,6 +41,8 @@ export default function ConciliacionesPage() {
   const [selectedConciliacion, setSelectedConciliacion] = useState<Conciliacion | null>(null);
   const [calcDialogOpen, setCalcDialogOpen] = useState(false);
   const [selectedIncapacidad, setSelectedIncapacidad] = useState<Incapacidad | null>(null);
+  // Estado de la incapacidad asociada al detalle
+  const [estadoIncapacidad, setEstadoIncapacidad] = useState<string | null>(null);
 
   // Query para conciliaciones
   const { data: conciliaciones = [], isLoading } = useQuery({
@@ -77,6 +79,15 @@ export default function ConciliacionesPage() {
     setSelectedConciliacion(conciliacion);
     setDetailDialogOpen(true);
   };
+
+  // Consultar el estado de la incapacidad asociada cuando cambia selectedConciliacion
+  useEffect(() => {
+    if (selectedConciliacion && selectedConciliacion.incapacidad_id) {
+      incapacidadService.getById(selectedConciliacion.incapacidad_id)
+        .then((incap) => setEstadoIncapacidad(incap.estado))
+        .catch(() => setEstadoIncapacidad(null));
+    }
+  }, [selectedConciliacion]);
 
   const handleCrearConciliacion = () => {
     if (!selectedIncapacidad) return;
@@ -510,7 +521,7 @@ export default function ConciliacionesPage() {
           <Button onClick={() => setDetailDialogOpen(false)} size="large">
             Cerrar
           </Button>
-          {selectedConciliacion && selectedConciliacion.monto_empresa_67 > 0 && (
+          {selectedConciliacion && selectedConciliacion.monto_empresa_67 > 0 && estadoIncapacidad !== 'conciliada' && (
             <Button 
               variant="contained" 
               size="large"
@@ -519,12 +530,18 @@ export default function ConciliacionesPage() {
                   state: {
                     monto: selectedConciliacion.monto_empresa_67,
                     beneficiario: selectedConciliacion.colaborador_nombre,
-                    concepto: `Pago incapacidad - ${selectedConciliacion.dias_incapacidad} días`
+                    concepto: `Pago incapacidad - ${selectedConciliacion.dias_incapacidad} días`,
+                    incapacidad_id: selectedConciliacion.incapacidad_id,
                   }
                 });
               }}
             >
               Procesar Pago
+            </Button>
+          )}
+          {selectedConciliacion && estadoIncapacidad === 'conciliada' && (
+            <Button variant="outlined" size="large" disabled color="success">
+              Pago hecho
             </Button>
           )}
         </DialogActions>
