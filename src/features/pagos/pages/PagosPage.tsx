@@ -21,7 +21,7 @@ import {
 } from '@mui/icons-material';
 import toast from 'react-hot-toast';
 import { incapacidadService } from '../../../api/services/incapacidadService';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface PagoData {
   monto?: number;
@@ -48,6 +48,7 @@ export const PagosPage = () => {
   // Recuperar id de incapacidad si viene de conciliación
   // Puede venir como string, pero updateEstado espera number
   const incapacidadId = pagoData.incapacidad_id ? Number(pagoData.incapacidad_id) : undefined;
+  const queryClient = useQueryClient();
 
   const updateEstadoMutation = useMutation({
     mutationFn: async () => {
@@ -56,6 +57,9 @@ export const PagosPage = () => {
     },
     onSuccess: () => {
       toast.success('Estado actualizado a conciliada');
+      // Refrescar queries relevantes para que el dashboard de CONTA se actualice
+      queryClient.invalidateQueries({ queryKey: ['incapacidades'] });
+      queryClient.invalidateQueries({ queryKey: ['conciliaciones'] });
     }
   });
 
