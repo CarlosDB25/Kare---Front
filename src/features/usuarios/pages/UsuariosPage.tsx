@@ -100,7 +100,7 @@ export const UsuariosPage = () => {
   });
 
   const completarDatosMutation = useMutation({
-    mutationFn: ({ id, datos }: { id: number; datos: any }) => 
+    mutationFn: ({ id, datos }: { id: number; datos: { salario_base?: number; ibc?: number; area?: string; cargo?: string } }) => 
       usuarioService.completarDatos(id, datos),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['usuarios'] });
@@ -139,7 +139,7 @@ export const UsuariosPage = () => {
     }
   };
 
-  const handleSubmitDatos = (datos: any) => {
+  const handleSubmitDatos = (datos: { salario_base?: number; ibc?: number; area?: string; cargo?: string }) => {
     if (selectedUser) {
       completarDatosMutation.mutate({ id: selectedUser.id, datos });
     }

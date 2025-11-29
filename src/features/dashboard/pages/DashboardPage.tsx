@@ -91,12 +91,7 @@ export const DashboardPage = () => {
     enabled: !!user?.id,
   });
 
-  // Cargar reemplazos para colaboradores y líderes
-  const { data: misReemplazos = [] } = useQuery({
-    queryKey: ['reemplazos', 'mis-reemplazos', user?.id],
-    queryFn: () => reemplazoService.getMisReemplazos(),
-    enabled: !!user?.id && (user?.rol === 'colaborador' || user?.rol === 'lider'),
-  });
+  // ...existing code...
 
   // Cargar todos los reemplazos para líderes
   const { data: todosReemplazos = [] } = useQuery({
@@ -198,7 +193,7 @@ export const DashboardPage = () => {
       });
     }
     
-    const colaboradoresConReemplazo = reemplazosParaMostrar.reduce((acc: any, reemplazo) => {
+    const colaboradoresConReemplazo = reemplazosParaMostrar.reduce<Record<string, { nombre: string; activos: number; finalizados: number }>>((acc, reemplazo) => {
       const nombre = reemplazo.nombre_ausente;
       if (!acc[nombre]) {
         acc[nombre] = { nombre, activos: 0, finalizados: 0 };
@@ -585,20 +580,25 @@ export const DashboardPage = () => {
             />
 
             {/* Card Reemplazo Activo - Solo para Colaboradores AUSENTES */}
-            {isColaborador && (
-              (() => {
-                // Mostrar solo si el usuario autenticado es el AUSENTE en un reemplazo activo
-                const tieneReemplazoActivoComoAusente = misReemplazos.some(r => r.estado === 'activo' && r.colaborador_reemplazo_id !== user?.id);
-                return (
-                  <StatsCard
-                    title="Reemplazo Activo"
-                    value={tieneReemplazoActivoComoAusente ? 'Sí' : 'No'}
-                    icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
-                    bgColor={tieneReemplazoActivoComoAusente ? '#00bcd4' : '#9e9e9e'}
-                  />
-                );
-              })()
-            )}
+            {isColaborador && (() => {
+              // Buscar incapacidades del usuario actual
+              const misIncapacidadesIds = incapacidades
+                .filter(i => i.usuario_id === user?.id)
+                .map(i => i.id);
+
+              // Buscar si alguna de esas incapacidades tiene un reemplazo activo
+              const tieneReemplazoActivoComoAusente = misIncapacidadesIds.length > 0 &&
+                todosReemplazos.some(r => r.estado === 'activo' && misIncapacidadesIds.includes(r.incapacidad_id));
+
+              return (
+                <StatsCard
+                  title="Reemplazo Activo"
+                  value={tieneReemplazoActivoComoAusente ? 'Sí' : 'No'}
+                  icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
+                  bgColor={tieneReemplazoActivoComoAusente ? '#00bcd4' : '#9e9e9e'}
+                />
+              );
+            })()}
 
             {/* Cards solo para GH/Lider */}
             {(isAdmin || isLider) && (

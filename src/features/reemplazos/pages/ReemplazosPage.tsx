@@ -34,6 +34,7 @@ import {
 } from '@mui/icons-material';
 import { reemplazoService, type Reemplazo, type CreateReemplazoData } from '../../../api/services/reemplazoService';
 import { incapacidadService } from '../../../api/services/incapacidadService';
+import type { Incapacidad } from '../../incapacidades/types/incapacidad.types';
 import { usuarioService } from '../../../api/services/usuarioService';
 import { useAuthStore } from '../../../store/authStore';
 import { formatDate } from '../../../utils';
@@ -431,7 +432,7 @@ const CreateReemplazoDialog = ({ open, onClose }: CreateDialogProps) => {
     funciones_asignadas: '',
   });
   const [error, setError] = useState('');
-  const [selectedIncapacidad, setSelectedIncapacidad] = useState<any>(null);
+  const [selectedIncapacidad, setSelectedIncapacidad] = useState<Incapacidad | null>(null);
 
   const { data: incapacidades = [] } = useQuery({
     queryKey: ['incapacidades'],
