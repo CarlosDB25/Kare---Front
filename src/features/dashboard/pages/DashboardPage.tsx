@@ -93,11 +93,11 @@ export const DashboardPage = () => {
 
   // ...existing code...
 
-  // Cargar todos los reemplazos para líderes
+  // Cargar todos los reemplazos para líderes y colaboradores (para mostrar reemplazo activo al ausente)
   const { data: todosReemplazos = [] } = useQuery({
     queryKey: ['reemplazos', user?.id],
     queryFn: () => reemplazoService.getAll(),
-    enabled: !!user?.id && user?.rol === 'lider',
+    enabled: !!user?.id && (user?.rol === 'lider' || user?.rol === 'colaborador'),
   });
 
   // Cargar usuarios para líderes (para filtrar por área)
