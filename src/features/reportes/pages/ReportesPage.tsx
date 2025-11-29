@@ -61,8 +61,13 @@ export const ReportesPage = () => {
     enabled: user?.rol === 'lider',
   });
 
-  // Obtener nombre de la empresa del localStorage o usar default
+  // Obtener datos de la empresa del localStorage o usar default
   const nombreEmpresa = localStorage.getItem('nombreEmpresa') || 'KARE - Sistema de Gestión';
+  const nitEmpresa = localStorage.getItem('empresaNit') || '';
+  const direccionEmpresa = localStorage.getItem('empresaDireccion') || '';
+  const telefonoEmpresa = localStorage.getItem('empresaTelefono') || '';
+  const emailEmpresa = localStorage.getItem('empresaEmail') || '';
+  const representanteEmpresa = localStorage.getItem('empresaRepresentante') || '';
 
   // Filtrar datos por fecha y área (para líderes) - usando useMemo para recalcular correctamente
   const datosFiltrados = useMemo(() => {
@@ -248,6 +253,26 @@ export const ReportesPage = () => {
           <Typography variant="h4" fontWeight={700} sx={{ color: '#1976d2' }} gutterBottom>
             {nombreEmpresa}
           </Typography>
+          {/* Datos de la empresa */}
+          {(nitEmpresa || direccionEmpresa || telefonoEmpresa || emailEmpresa || representanteEmpresa) && (
+            <Box sx={{ mb: 1 }}>
+              {nitEmpresa && (
+                <Typography variant="body2" sx={{ color: '#666' }}>NIT: {nitEmpresa}</Typography>
+              )}
+              {direccionEmpresa && (
+                <Typography variant="body2" sx={{ color: '#666' }}>Dirección: {direccionEmpresa}</Typography>
+              )}
+              {telefonoEmpresa && (
+                <Typography variant="body2" sx={{ color: '#666' }}>Teléfono: {telefonoEmpresa}</Typography>
+              )}
+              {emailEmpresa && (
+                <Typography variant="body2" sx={{ color: '#666' }}>Email: {emailEmpresa}</Typography>
+              )}
+              {representanteEmpresa && (
+                <Typography variant="body2" sx={{ color: '#666' }}>Representante Legal: {representanteEmpresa}</Typography>
+              )}
+            </Box>
+          )}
           <Typography variant="h5" fontWeight={600} sx={{ color: '#000' }} gutterBottom>
             Reporte de {tipoReporte === 'general' ? 'Incapacidades' : tipoReporte === 'financiero' ? 'Análisis Financiero' : `Equipo - Área ${user?.area || ''}`}
           </Typography>
