@@ -139,7 +139,8 @@ export const UsuariosPage = () => {
     }
   };
 
-  const handleSubmitDatos = (datos: { salario_base?: number; ibc?: number; area?: string; cargo?: string }) => {
+  type DatosUsuarioInput = { salario_base?: number; ibc?: number; area?: string; cargo?: string };
+  const handleSubmitDatos = (datos: DatosUsuarioInput) => {
     if (selectedUser) {
       completarDatosMutation.mutate({ id: selectedUser.id, datos });
     }
@@ -436,7 +437,16 @@ export const UsuariosPage = () => {
           open={datosDialogOpen}
           onClose={() => setDatosDialogOpen(false)}
           usuario={selectedUser as unknown as User}
-          onSubmit={handleSubmitDatos}
+          onSubmit={(datos: Partial<Usuario>) => {
+            // Mapear los campos aquí antes de pasar a handleSubmitDatos
+            const mappedDatos: DatosUsuarioInput = {
+              salario_base: datos.salario != null ? datos.salario : undefined,
+              ibc: datos.ibc != null ? datos.ibc : undefined,
+              area: typeof datos.area === 'string' ? datos.area : undefined,
+              cargo: typeof datos.cargo === 'string' ? datos.cargo : undefined,
+            };
+            handleSubmitDatos(mappedDatos);
+          }}
           isLoading={completarDatosMutation.isPending}
         />
       )}

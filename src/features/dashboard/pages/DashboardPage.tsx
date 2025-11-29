@@ -91,13 +91,18 @@ export const DashboardPage = () => {
     enabled: !!user?.id,
   });
 
-  // ...existing code...
+  // Cargar reemplazos para colaboradores y líderes
+  const { data: misReemplazos = [] } = useQuery({
+    queryKey: ['reemplazos', 'mis-reemplazos', user?.id],
+    queryFn: () => reemplazoService.getMisReemplazos(),
+    enabled: !!user?.id && (user?.rol === 'colaborador' || user?.rol === 'lider'),
+  });
 
-  // Cargar todos los reemplazos para líderes y colaboradores (para mostrar reemplazo activo al ausente)
+  // Cargar todos los reemplazos para líderes
   const { data: todosReemplazos = [] } = useQuery({
     queryKey: ['reemplazos', user?.id],
     queryFn: () => reemplazoService.getAll(),
-    enabled: !!user?.id && (user?.rol === 'lider' || user?.rol === 'colaborador'),
+    enabled: !!user?.id && user?.rol === 'lider',
   });
 
   // Cargar usuarios para líderes (para filtrar por área)
@@ -579,26 +584,15 @@ export const DashboardPage = () => {
               bgColor="#f44336"
             />
 
-            {/* Card Reemplazo Activo - Solo para Colaboradores AUSENTES */}
-            {isColaborador && (() => {
-              // Buscar incapacidades del usuario actual
-              const misIncapacidadesIds = incapacidades
-                .filter(i => i.usuario_id === user?.id)
-                .map(i => i.id);
-
-              // Buscar si alguna de esas incapacidades tiene un reemplazo activo
-              const tieneReemplazoActivoComoAusente = misIncapacidadesIds.length > 0 &&
-                todosReemplazos.some(r => r.estado === 'activo' && misIncapacidadesIds.includes(r.incapacidad_id));
-
-              return (
-                <StatsCard
-                  title="Reemplazo Activo"
-                  value={tieneReemplazoActivoComoAusente ? 'Sí' : 'No'}
-                  icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
-                  bgColor={tieneReemplazoActivoComoAusente ? '#00bcd4' : '#9e9e9e'}
-                />
-              );
-            })()}
+            {/* Card Reemplazo Activo - Solo para Colaboradores */}
+            {isColaborador && (
+              <StatsCard
+                title="Reemplazo Activo"
+                value={misReemplazos.filter(r => r.estado === 'activo').length > 0 ? 'Sí' : 'No'}
+                icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
+                bgColor={misReemplazos.filter(r => r.estado === 'activo').length > 0 ? '#00bcd4' : '#9e9e9e'}
+              />
+            )}
 
             {/* Cards solo para GH/Lider */}
             {(isAdmin || isLider) && (
