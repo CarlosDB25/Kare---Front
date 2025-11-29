@@ -255,7 +255,7 @@ export const ReportesPage = () => {
           </Typography>
           {/* Datos de la empresa */}
           {(nitEmpresa || direccionEmpresa || telefonoEmpresa || emailEmpresa || representanteEmpresa) && (
-            <Box sx={{ mb: 4 }}>
+            <Box sx={{ mb: 10 }}>
               {nitEmpresa && (
                 <Typography variant="body2" sx={{ color: '#666' }}>NIT: {nitEmpresa}</Typography>
               )}
