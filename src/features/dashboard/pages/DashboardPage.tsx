@@ -584,14 +584,20 @@ export const DashboardPage = () => {
               bgColor="#f44336"
             />
 
-            {/* Card Reemplazo Activo - Solo para Colaboradores */}
+            {/* Card Reemplazo Activo - Solo para Colaboradores AUSENTES */}
             {isColaborador && (
-              <StatsCard
-                title="Reemplazo Activo"
-                value={misReemplazos.filter(r => r.estado === 'activo').length > 0 ? 'Sí' : 'No'}
-                icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
-                bgColor={misReemplazos.filter(r => r.estado === 'activo').length > 0 ? '#00bcd4' : '#9e9e9e'}
-              />
+              (() => {
+                // Mostrar solo si el usuario autenticado es el AUSENTE en un reemplazo activo
+                const tieneReemplazoActivoComoAusente = misReemplazos.some(r => r.estado === 'activo' && r.colaborador_reemplazo_id !== user?.id);
+                return (
+                  <StatsCard
+                    title="Reemplazo Activo"
+                    value={tieneReemplazoActivoComoAusente ? 'Sí' : 'No'}
+                    icon={<SwapHoriz sx={{ fontSize: 28, color: '#fff' }} />}
+                    bgColor={tieneReemplazoActivoComoAusente ? '#00bcd4' : '#9e9e9e'}
+                  />
+                );
+              })()
             )}
 
             {/* Cards solo para GH/Lider */}
