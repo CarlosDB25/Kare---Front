@@ -84,9 +84,7 @@ export const AppLayout = () => {
   const drawer = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <Toolbar sx={{ px: 2, py: 2, borderBottom: 1, borderColor: 'divider' }}>
-        <Typography variant="h6" fontWeight={700} letterSpacing="-0.02em">
-          KARE
-        </Typography>
+        <img src="/kare azul.svg" alt="KARE Logo" style={{ height: 40 }} />
       </Toolbar>
       <List sx={{ flex: 1, px: 1, pt: 2 }}>
         {menuItems.map((item) => {
