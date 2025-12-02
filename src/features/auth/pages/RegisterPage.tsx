@@ -83,9 +83,7 @@ export const RegisterPage = () => {
           p: 6,
         }}
       >
-        <Typography variant="h2" fontWeight={800} sx={{ mb: 2 }}>
-          KARE
-        </Typography>
+        <img src="/kare blanco.svg" alt="KARE Logo" style={{ width: 300, marginBottom: 24 }} />
         <Typography variant="h6" fontWeight={300} textAlign="center" sx={{ maxWidth: 400 }}>
           Sistema Integral de Gestión de Incapacidades Médicas
         </Typography>
@@ -266,11 +264,11 @@ export const RegisterPage = () => {
 
                 <Button
                   type="submit"
-                  variant="contained"
+                  //variant="contained"
                   fullWidth
                   size="large"
                   disabled={isPending}
-                  sx={{ 
+                  sx={{
                     py: 1.75,
                     bgcolor: 'secondary.main',
                     fontWeight: 600,
@@ -278,6 +276,7 @@ export const RegisterPage = () => {
                     textTransform: 'none',
                     fontSize: '1rem',
                     boxShadow: 2,
+                    color: 'white',
                     '&:hover': {
                       bgcolor: 'secondary.dark',
                       boxShadow: 4,

@@ -7,49 +7,49 @@ export const getTheme = (mode: PaletteMode) =>
       mode,
       ...(mode === 'light'
         ? {
-            // Modo claro - Gris + Verde Esmeralda
-            primary: {
-              main: '#1F2937', // Gris oscuro
-              light: '#4B5563',
-              dark: '#111827',
-            },
-            secondary: {
-              main: '#059669', // Verde esmeralda elegante
-              light: '#10B981',
-              dark: '#047857',
-              contrastText: '#FFFFFF',
-            },
-            background: {
-              default: '#F9FAFB',
-              paper: '#FFFFFF',
-            },
-            text: {
-              primary: '#111827',
-              secondary: '#6B7280',
-            },
-          }
+          // Modo claro - Gris + Verde Esmeralda
+          primary: {
+            main: '#1F2937', // Gris oscuro
+            light: '#4B5563',
+            dark: '#111827',
+          },
+          secondary: {
+            main: '#7495b2', // Verde esmeralda elegante
+            light: '#005469',
+            dark: '#2062AF',
+            contrastText: '#FFFFFF',
+          },
+          background: {
+            default: '#F9FAFB',
+            paper: '#FFFFFF',
+          },
+          text: {
+            primary: '#111827',
+            secondary: '#6B7280',
+          },
+        }
         : {
-            // Modo oscuro - Gris + Verde Esmeralda
-            primary: {
-              main: '#F9FAFB',
-              light: '#FFFFFF',
-              dark: '#E5E7EB',
-            },
-            secondary: {
-              main: '#10B981',
-              light: '#34D399',
-              dark: '#059669',
-              contrastText: '#FFFFFF',
-            },
-            background: {
-              default: '#0F172A',
-              paper: '#1E293B',
-            },
-            text: {
-              primary: '#F1F5F9',
-              secondary: '#94A3B8',
-            },
-          }),
+          // Modo oscuro - Gris + Verde Esmeralda
+          primary: {
+            main: '#F9FAFB',
+            light: '#FFFFFF',
+            dark: '#E5E7EB',
+          },
+          secondary: {
+            main: '#7495b2', // Verde esmeralda elegante
+            light: '#005469',
+            dark: '#2062AF',
+            contrastText: '#FFFFFF',
+          },
+          background: {
+            default: '#242426',
+            paper: '#313135ff',
+          },
+          text: {
+            primary: '#F1F5F9',
+            secondary: '#94A3B8',
+          },
+        }),
       error: {
         main: '#EF4444',
         light: '#F87171',
@@ -152,8 +152,8 @@ export const getTheme = (mode: PaletteMode) =>
         styleOverrides: {
           root: {
             borderRadius: 20,
-            boxShadow: mode === 'light' 
-              ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)' 
+            boxShadow: mode === 'light'
+              ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
               : '0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3)',
             border: mode === 'light' ? '1px solid rgba(0,0,0,0.06)' : '1px solid rgba(255,255,255,0.05)',
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -195,8 +195,8 @@ export const getTheme = (mode: PaletteMode) =>
         styleOverrides: {
           paper: {
             backgroundImage: 'none',
-            borderRight: mode === 'light' 
-              ? '1px solid rgba(0,0,0,0.08)' 
+            borderRight: mode === 'light'
+              ? '1px solid rgba(0,0,0,0.08)'
               : '1px solid rgba(255,255,255,0.08)',
             background: mode === 'light'
               ? '#FFFFFF'
